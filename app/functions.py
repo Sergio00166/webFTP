@@ -1,17 +1,19 @@
 #Code by Sergio00166
 
-from os.path import commonpath,join,isdir,relpath,abspath
-from os import listdir,sep,scandir,access,R_OK
-from os.path import getmtime,getsize,exists
+from os.path import commonpath, join, isdir, relpath, abspath
+from os import listdir, sep, scandir, access, R_OK
+from os.path import getmtime, getsize, exists
 from datetime import datetime as dt
 from json import load as jsload
+from time import sleep as delay
 from sys import path as pypath
+from flask import session
 from pathlib import Path
 
 
 is_subdirectory = lambda parent, child: commonpath([parent]) == commonpath([parent, child])
 # Load database of file type and extensions
-file_types = jsload(open(sep.join([pypath[0],"files.json"])))
+file_types = jsload(open(sep.join([pypath[0],"extra","files.json"])))
 # Convert it to a lookup table to get file type as O(1)
 file_type_map = {v: k for k, vals in file_types.items() for v in vals}
 # Check if the file is a binary file or not
@@ -55,7 +57,7 @@ def get_directory_size(directory):
     return total
 
 
-def get_folder_content(folder_path, root, folder_size):
+def get_folder_content(folder_path, root, folder_size, ACL):
     dirs,files,content = [],[],[]
     for x in listdir(folder_path):
         fix = join(folder_path, x)
@@ -65,6 +67,8 @@ def get_folder_content(folder_path, root, folder_size):
     for item in dirs+files:
         try:
             item_path = join(folder_path, item)
+            item_full_path = relpath(item_path,start=root).replace(sep,"/")
+            validate_acl(item_full_path,ACL)
             description = get_file_type(item_path)
             if description == "directory" and folder_size:
                 size = get_directory_size(item_path)
@@ -73,10 +77,9 @@ def get_folder_content(folder_path, root, folder_size):
             else: size = 0
             try: mtime = getmtime(item_path)
             except: mtime = None
-            item_path = relpath(item_path,start=root).replace(sep,"/")
             if description == "directory": item_path += "/"
             content.append({
-                'name': item, 'path': item_path,
+                'name': item, 'path': item_full_path,
                 'description': description,
                 "size": size, "mtime": mtime
             })
@@ -117,14 +120,56 @@ def humanize_content(folder_content):
     return folder_content
 
 
-def isornot(path,root):
+def isornot(path,root,igntf=False):
     # Checks if the path is inside the root dir
     # else raise an exception depending on the case
     path = path.replace("/",sep)
     path = abspath(root+sep+path)
     if is_subdirectory(root, path):
+        if igntf: return path
         if not exists(path): raise FileNotFoundError
         if not access(path, R_OK): raise PermissionError
     else: raise PermissionError
     return path
+
+
+def update_rules(USERS,ACL):
+    path = sep.join([pypath[0],"extra",""])
+    users_db = path+"users.json"
+    acl_db = path+"acl.json"
+    old_mtimes = (0,0)
+    while True:
+        mtimes = (
+            getmtime(users_db),
+            getmtime(acl_db)
+        )
+        if mtimes > old_mtimes:
+            try:
+                tmp = jsload(open(users_db))
+                USERS.clear(); USERS.update(tmp)
+            except: pass
+            try:
+                tmp = jsload(open(acl_db))
+                ACL.clear(); ACL.update(tmp)
+            except: pass
+        else: delay(1)
+        old_mtimes = mtimes
+
+def validate_acl(path,ACL,write=False):
+    askd_perm = 2 if write else 1
+    user = session.get("user","DEFAULT")
+    while True:
+        # Always start on /
+        if not path.startswith("/"):
+            path = "/"+path
+        # Check if there is a rule for it
+        if path in ACL and user in ACL[path]:
+            perm = ACL[path][user]
+            if perm==0: break
+            if perm>=askd_perm: return
+        # Check if on top and break loop
+        if path=="/": break
+        # Go to parent directory
+        path = "/".join(path.split("/")[:-1])
+    raise PermissionError
 

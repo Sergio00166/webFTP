@@ -1,7 +1,11 @@
 # Code by Sergio00166
 
-from subprocess import Popen, PIPE, run, DEVNULL
+from subprocess import Popen,PIPE,run,DEVNULL
 from json import loads as jsload
+from sys import path
+from os import sep
+
+path.append(sep.join([path[0],"extra","pysubs2.zip"]))
 
 
 def check_ffmpeg_installed():
