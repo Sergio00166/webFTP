@@ -139,21 +139,19 @@ def update_rules(USERS,ACL):
     acl_db = path+"acl.json"
     old_mtimes = (0,0)
     while True:
-        mtimes = (
-            getmtime(users_db),
-            getmtime(acl_db)
-        )
-        if mtimes > old_mtimes:
-            try:
+        try:
+            mtimes = (
+                getmtime(users_db),
+                getmtime(acl_db)
+            )
+            if mtimes > old_mtimes:
                 tmp = jsload(open(users_db))
                 USERS.clear(); USERS.update(tmp)
-            except: pass
-            try:
                 tmp = jsload(open(acl_db))
                 ACL.clear(); ACL.update(tmp)
-            except: pass
-        else: delay(1)
-        old_mtimes = mtimes
+            old_mtimes = mtimes
+        except: pass
+        delay(1)
 
 def validate_acl(path,ACL,write=False):
     askd_perm = 2 if write else 1
