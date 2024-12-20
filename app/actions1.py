@@ -4,20 +4,14 @@ from flask import Response, render_template, redirect, session
 from os.path import join, relpath, exists, getsize
 from os.path import getmtime, basename, abspath
 from urllib.parse import urlparse, urlunparse
-from multiprocessing import Queue, Process
 from os import sep, stat, walk
 from hashlib import sha256
 from flask import session
 from sys import stderr
 from video import *
 import tarfile
+from time import time
 
-
-subsmimes = {
-    "ssa":"application/x-substation-alpha",
-    "ass":"application/x-substation-alpha",
-    "webvtt":"text/vtt",
-}
 
 def create_tar_header(file_path, arcname):
     tarinfo = tarfile.TarInfo(name=arcname)
@@ -59,24 +53,14 @@ def send_dir(directory):
     headers={'Content-Disposition': 'attachment;filename='+folder+'.tar'})
 
 
-
+# Access to the cached function
+# Also set the filesize to invalidate
+# that cache if the file has other size
+# that means the file has changed
 def get_subtitles(index,file,legacy,info):
-    codec,out = get_track(file,index,info)
-    # Convert or extract the subtitles
-    if legacy and not (codec=="webvtt" or info):
-        ret = Queue() # Convert the subtitles on a proc
-        proc = Process(target=convert_ass, args=(out,ret,))
-        proc.start(); converted = ret.get(); proc.join()
-        if not converted[0]: raise converted[1]
-        out = converted[1]
-    # Get filename and for downloading the subtitles
-    codec = "webvtt" if legacy else codec
-    subsname = file.split("/")[-1]+f".track{str(index)}."
-    subsname += "vtt" if codec=="webvtt" else codec
-    # Return the subtittle track
-    return Response(out,mimetype=subsmimes[codec], headers=\
-    {'Content-Disposition': 'attachment;filename='+subsname})
-
+    filesize = getsize(file)
+    args = (index,file,legacy,info,filesize)
+    return extract_subtitles(*args)
 
 
 def login(request,USERS):
