@@ -1,8 +1,8 @@
 #Code by Sergio00166
 
 from flask import Response, render_template, redirect, session
-from os.path import join, relpath, exists, getsize
 from os.path import getmtime, basename, abspath
+from os.path import join, relpath, exists
 from urllib.parse import urlparse, urlunparse
 from os import sep, stat, walk
 from hashlib import sha256
@@ -52,15 +52,6 @@ def send_dir(directory):
     return Response(generate_tar(directory),mimetype='application/x-tar',
     headers={'Content-Disposition': 'attachment;filename='+folder+'.tar'})
 
-
-# Access to the cached function
-# Also set the filesize to invalidate
-# that cache if the file has other size
-# that means the file has changed
-def get_subtitles(index,file,legacy,info):
-    filesize = getsize(file)
-    args = (index,file,legacy,info,filesize)
-    return extract_subtitles(*args)
 
 
 def login(request,USERS):
