@@ -139,7 +139,7 @@ def extract_subtitles(index,file,legacy,filesize):
     
 
 def get_subtitles(index,file,legacy,info):
-    if info: codec,out = get_track(file,index)
+    if info: codec,out = get_track(file,index,True)
     else:
         filesize = getsize(file)
         args = (index,file,legacy,filesize)
