@@ -50,6 +50,7 @@ body {
     height: 100dvh;
     background: #000000;
     -webkit-tap-highlight-color: transparent;
+    user-select: none;
 }
 .video-container {
     position: relative;
@@ -62,21 +63,21 @@ body {
 }
 
 .video-box {
-	position: relative;
+    position: relative;
 }
 
 video {
     max-height: 90dvh;
-	max-width: 100%;
-	aspect-ratio: auto;
+    max-width: 100%;
+    aspect-ratio: auto;
     object-fit: contain !important;
     margin: 0;
     padding: 0;
     display: block;
 }
 canvas {
-	position: absolute;
-	object-fit: contain !important;
+    position: absolute;
+    object-fit: contain !important;
 }
 
 .video-container:fullscreen video,
@@ -469,63 +470,63 @@ button:focus { outline: none; }
             margin-bottom: -1rem;
         }
     }
-	/* Hide everything if screen is so fucking small */
-	@media (max-width: 160px) {
-		.video-container {
-			display: none;
-		}
-	}
+    /* Hide everything if screen is so fucking small */
+    @media (max-width: 160px) {
+        .video-container {
+            display: none;
+        }
+    }
 }
 
 @media (min-aspect-ratio: 1/1) {
     .video-container {
         aspect-ratio: 16/9;
     }
-	@media (max-width: 430px) {
-		.video-container {
-			padding-bottom: 64px;
-		}
-		.time-container {
-			display: none;
-		}
-		.controls {
-			padding: 1rem;
-			font-size: 1.2rem;
-			display: flex;
-			align-items: center;
-			flex-direction: column;
-		}
-		.setting-menu {
-			margin-left: 1rem;
-			margin-bottom: 1rem;
-		}
-	}
-	@media (max-height: 320px) {
-		.hover-time .hover-duration {
-			font-size: 0.5rem;
-		}
-		.video-container {
-			padding-bottom: 48px;
-		}
-		.side-controls {
-			display: none;
-		}
-	}
-	@media (max-height: 320px) {
-		.hover-time .hover-duration {
-			font-size: 0.5rem;
-		}
-		.video-container {
-			padding-bottom: 0;
-		}
-		.side-controls {
-			display: none;
-		}
-	}
-	/* Hide everything if screen is so fucking small */
-	@media (max-height: 160px) {
-		.video-container {
-			display: none;
-		}
-	}
+    @media (max-width: 430px) {
+        .video-container {
+            padding-bottom: 64px;
+        }
+        .time-container {
+            display: none;
+        }
+        .controls {
+            padding: 1rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+        .setting-menu {
+            margin-left: 1rem;
+            margin-bottom: 1rem;
+        }
+    }
+    @media (max-height: 320px) {
+        .hover-time .hover-duration {
+            font-size: 0.5rem;
+        }
+        .video-container {
+            padding-bottom: 48px;
+        }
+        .side-controls {
+            display: none;
+        }
+    }
+    @media (max-height: 320px) {
+        .hover-time .hover-duration {
+            font-size: 0.5rem;
+        }
+        .video-container {
+            padding-bottom: 0;
+        }
+        .side-controls {
+            display: none;
+        }
+    }
+    /* Hide everything if screen is so fucking small */
+    @media (max-height: 160px) {
+        .video-container {
+            display: none;
+        }
+    }
 }
