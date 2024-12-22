@@ -13,6 +13,10 @@ video::cue {
 video::-webkit-media-text-track-display {
     padding-bottom: 0.25em !important;
 }
+/* Dont fucking show native video controls */
+video::-webkit-media-controls { display: none !important; }
+video::-moz-media-controls    { display: none !important; }
+
 img {
     width: 20px;
     height: 20px;
