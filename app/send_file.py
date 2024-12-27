@@ -11,7 +11,7 @@ import tarfile
 RANGE_REGEX = re_compile(r"bytes=(\d+)-(\d*)")
 
 
-def send_file(file_path):
+def send_file(file_path,mimetype=None):
     file_size = getsize(file_path)
     range_header = request.headers.get('Range')
     
@@ -23,13 +23,16 @@ def send_file(file_path):
             content_range = f"bytes {ranges[0][0]}-{ranges[-1][1]}/{file_size}"
         else: content_range = f"bytes {ranges[0][0]}-{ranges[-1][1]}/{file_size}"
 
-        return Response(generate(file_path,ranges), status=206, headers={
-            'Content-Range': content_range,
-            'Accept-Ranges': 'bytes',
+        headers = {
+            'Content-Range': content_range, 'Accept-Ranges': 'bytes',
             'Content-Length': str(sum([end - start + 1 for start, end in ranges])) 
-        })
-    
-    return df_send_file(file_path)
+        }
+        if not mimetype is None: headers['Content-Type'] = mimetype
+        
+        return Response(generate(file_path,ranges), status=206, headers=headers)
+
+    if mimetype is None: return df_send_file(file_path)
+    else: return df_send_file(file_path,mimetype=mimetype)
 
 
 def parse_ranges(range_header, file_size):
