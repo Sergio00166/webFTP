@@ -1,9 +1,12 @@
 # Code by Sergio00166
 
-from re import compile as re_compile
-from flask import Response, request
 from flask import send_file as df_send_file
-from os.path import getsize
+from os.path import getsize,relpath,join
+from os.path import basename,getmtime
+from re import compile as re_compile
+from flask import Response,request
+from os import sep, stat, walk
+import tarfile
 
 RANGE_REGEX = re_compile(r"bytes=(\d+)-(\d*)")
 
@@ -52,4 +55,47 @@ def generate(file_path, ranges):
             file.seek(start)
             remaining_bytes = end - start + 1
             yield from read_chunk(file, remaining_bytes)
+
+
+
+""" TO SEND FOLDER AS TAR FILES IN REALTIME """
+
+def send_dir(directory):
+    folder = basename(directory)
+    if folder=="": folder="index"
+    return Response(generate_tar(directory),mimetype='application/x-tar',
+    headers={'Content-Disposition': 'attachment;filename='+folder+'.tar'})
+
+def create_tar_header(file_path, arcname):
+    tarinfo = tarfile.TarInfo(name=arcname)
+    tarinfo.size = getsize(file_path)
+    tarinfo.mtime = getmtime(file_path)
+    tarinfo.mode = stat(file_path).st_mode
+    tarinfo.type = tarfile.REGTYPE
+    tarinfo.uname = ""
+    tarinfo.gname = ""
+    return tarinfo.tobuf()
+
+def stream_tar_file(file_path, arcname):
+    # Create the tar header for the file
+    yield create_tar_header(file_path, arcname)   
+    # Stream file contents from disk
+    with open(file_path, 'rb') as f:
+        while True:
+            chunk = f.read(262144)
+            if not chunk: break
+            yield chunk
+    # Generate padding for the block
+    file_size = getsize(file_path)
+    padding_size = (512-(file_size%512))%512
+    yield b'\0' * padding_size
+
+def generate_tar(directory_path):
+    for root, _, files in walk(directory_path):
+        for file in files:
+            file_path = join(root, file)
+            arcname = relpath(file_path, directory_path)
+            yield from stream_tar_file(file_path, arcname)
+  
+    yield b'\0'*1024 # Add TAR end
 

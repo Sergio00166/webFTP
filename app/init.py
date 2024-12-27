@@ -11,7 +11,7 @@ from os import sep,getenv,urandom
 from flask_sqlalchemy import SQLAlchemy
 from sys import path
 from files import addfile,delfile
-from send_file import send_file
+from send_file import send_file,send_dir
 
 
 def init():
