@@ -1,4 +1,4 @@
-# Code by Sergio1260
+# Code by Sergio00166
 
 from re import compile as re_compile
 from flask import Response, request
