@@ -1,7 +1,7 @@
 
 # Code by Sergio00166
 
-from functions import get_file_type,getclient
+from functions import get_file_type,getclient,update_rules
 from flask import redirect,request,Flask
 from actions import *
 from secrets import token_hex
