@@ -29,20 +29,20 @@
             </div>
             <div class="ctrl_flex_1">
                 <button class="toggleSelectMode" class="h_small" onclick="toggleSelectMode()">SELECT</button>
-                <div class="tools">
-                    <button id="toggleAllNone" onclick="toggleSelectAll()" disabled>A/N</button>
-                    <button id="invertSelection" onclick="invertSelection()" disabled>INV</button>
-                </div>
-                <button onclick="executeDownloads()">DOWNLOAD</button>
-            </div>
-            <div class="ctrl_flex_2">
-                {% if 'user' in session %}
+				<button id="invertSelection" onclick="invertSelection()" disabled>INV</button>
+				<button onclick="executeDownloads()">DOWNLOAD</button>
+				{% if 'user' in session %}
                     <button onclick='window.location.href="?logout"'>LOGOUT</button>
                 {% else %}
                     <button onclick='window.location.href="?login"'>LOGIN</button>
-                {% endif %}
-                <button onclick='window.location.href="?add"'>ADD</button>
-                <button id="deleteBtn" onclick="executeDeletes()" disabled>DEL</button>
+                {% endif %} 
+            </div>
+            <div class="ctrl_flex_2">
+			    <button id="addBtn" onclick='window.location.href="?add"'>ADD</button>
+				<button id="deleteBtn" onclick="executeDeletes()" disabled>DEL</button>
+				<button onclick="createOptionDialog()">COPY</button>
+				<button onclick="pasteFiles()">PASTE</button>
+
             </div>
         </div>
         <div class="container"> <br>

@@ -25,6 +25,9 @@ def explorer(path):
 
         if "delete" in request.args:
             return delfile(path,ACL,root)
+
+        if "mvcp" in request.args:
+            return move_copy(path,ACL,root)
     
         # Check if we can access it
         validate_acl(path,ACL)

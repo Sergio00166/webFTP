@@ -10,7 +10,7 @@ from flask_session import Session
 from os import sep,getenv,urandom
 from flask_sqlalchemy import SQLAlchemy
 from sys import path
-from files import addfile,delfile
+from files import addfile,delfile,move_copy
 from send_file import send_file,send_dir
 
 
