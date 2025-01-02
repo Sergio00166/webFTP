@@ -75,7 +75,7 @@ def validate_directory_tree(directory_path,web_root,ACL):
         for file in files:
             file_path = join(root, file)
             with open(file_path, 'rb'): pass
-            file_path = relpath(file_path,start=root)
+            file_path = relpath(file_path,start=web_root)
             file_path = file_path.replace(sep,"/")
             validate_acl(file_path,ACL)
 
