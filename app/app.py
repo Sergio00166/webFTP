@@ -71,7 +71,7 @@ def explorer(path):
             hostname = proto+"://"+request.host+"/"
             sort = request.args["sort"] if "sort" in request.args else ""
             
-            if "tar" in request.args: return send_dir(path)
+            if "tar" in request.args: return send_dir(path,root,ACL)
             return directory(path,root,folder_size,sort,client,hostname,ACL)
   
     except Exception as e: return error(e,client)
@@ -104,7 +104,7 @@ def index():
         path = safe_path("/",root) # Check if we can access it
         sort = request.args["sort"] if "sort" in request.args else ""
 
-        if "tar" in request.args: return send_dir(path)
+        if "tar" in request.args: return send_dir(path,root,ACL,"index")
         return directory(path,root,folder_size,sort,client,hostname,ACL)
 
     except Exception as e: return error(e,client)
