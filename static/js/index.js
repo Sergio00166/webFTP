@@ -18,8 +18,8 @@ function toggleSelectMode() {
         .forEach(button => {
             button.textContent = buttonText;
         });
-	document.getElementById('deleteBtn').disabled = !selectMode;
-	document.getElementById('invertSelection').disabled = !selectMode;
+    document.getElementById('deleteBtn').disabled = !selectMode;
+    document.getElementById('invertSelection').disabled = !selectMode;
     if (!selectMode) { deselectAll(); }
 }
 
@@ -153,62 +153,63 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function set_cp_temp(list){
-	if (selectMode){ toggleSelectMode(); }
-	localStorage.setItem('copy', JSON.stringify(list));
+    if (selectMode){ toggleSelectMode(); }
+    localStorage.setItem('copy', JSON.stringify(list));
 }
 function set_mv_temp(list){
-	if (selectMode){ toggleSelectMode(); }
-	localStorage.setItem('move', JSON.stringify(list));
+    if (selectMode){ toggleSelectMode(); }
+    localStorage.setItem('move', JSON.stringify(list));
 }
 function clearAllMvCp(){ 
-	localStorage.removeItem('move');
-	localStorage.removeItem('copy');
+    localStorage.removeItem('move');
+    localStorage.removeItem('copy');
  }
 
 function getURLlist(){
-	list = [];
-	for (const id in selectedElements) {
-		const div = selectedElements[id];
-		const url = div.getAttribute('data-value');
-		if (url) { list.push(url); }
-	} return list;
+    list = [];
+    for (const id in selectedElements) {
+        const div = selectedElements[id];
+        const url = div.getAttribute('data-value');
+        if (url) { list.push(url); }
+    } return list;
 }
 
 
 function copyFiles() {
-	clearAllMvCp();
+    clearAllMvCp();
     if ((selectMode) && (Object.keys(selectedElements).length > 0)) {
-		list = getURLlist();
-		if (list !== []){ set_cp_temp(list); }
+        list = getURLlist();
+        if (list !== []){ set_cp_temp(list); }
     } else { set_cp_temp([window.location.pathname]); }
 }
 function moveFiles() {
-	clearAllMvCp();
+    clearAllMvCp();
     if ((selectMode) && (Object.keys(selectedElements).length > 0)) {
-		list = getURLlist();
-		if (list !== []){ set_mv_temp(list); }
+        list = getURLlist();
+        if (list !== []){ set_mv_temp(list); }
     } else { set_mv_temp([window.location.pathname]); }
 }
 
 function renameFiles() {
-	if ((selectMode) && (Object.keys(selectedElements).length>0)){
-		const items = getURLlist();
-		for (var item of items){
-			item = item.endsWith('/')?item.slice(0, -1):item;
-			name = item.split('/').pop();
-			var dest = prompt('New Name for '+name);
-			if (dest === null) { break; }
-			dest = item.substring(0, item.lastIndexOf("/"))+"/"+dest;
-			const formData = createForm(dest, "move", item);
-			const success = sendRequest(formData, item, dest);
-			if (!success) break;
-		}
-		clearAllMvCp();
-		location.reload();
-	}
+    if ((selectMode) && (Object.keys(selectedElements).length>0)){
+        const items = getURLlist();
+        for (var item of items){
+            item = item.endsWith('/')?item.slice(0, -1):item;
+            name = item.split('/').pop();
+            var dest = prompt('New Name for '+name);
+            if (dest === null) { break; }
+            dest = item.substring(0, item.lastIndexOf("/"))+"/"+dest;
+            const formData = createForm(dest, "move", item);
+            const success = sendRequest(formData, item, dest);
+            if (!success) break;
+        }
+        clearAllMvCp();
+        location.reload();
+    }
 }
 
 function createForm(destination, mode, path) {
+    destination = decodeURIComponent(destination);
     const inputs = [
         { name: 'destination', value: destination },
         { name: 'action', value: mode },
@@ -223,32 +224,32 @@ function createForm(destination, mode, path) {
 function sendRequest(formData, path, currentUrlPath) {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", path+"/?mvcp", false);
-	xhr.send(formData);
-	if (xhr.status !== 200) {
-		let errorMessage;
-		if (xhr.status === 403) {
-			msg = 'You dont have permission to do that';
-		} else if (xhr.status === 404) {
-			msg = 'That file/folder does not exist';
-		} else if (xhr.status === 500) {
-			msg = 'Something went wrong on the server.';
-		} else if (xhr.status === 400) {
-			msg = 'Method not valid';
-		} else if (xhr.status === 409) {
-			msg = 'It already exists';
-		}
-		alert(msg);
-		return false;
-	} 
-	return true;
+    xhr.send(formData);
+    if (xhr.status !== 200) {
+        let errorMessage;
+        if (xhr.status === 403) {
+            msg = 'You dont have permission to do that';
+        } else if (xhr.status === 404) {
+            msg = 'That file/folder does not exist';
+        } else if (xhr.status === 500) {
+            msg = 'Something went wrong on the server.';
+        } else if (xhr.status === 400) {
+            msg = 'Method not valid';
+        } else if (xhr.status === 409) {
+            msg = 'It already exists';
+        }
+        alert(msg);
+        return false;
+    }
+    return true;
 }
 
 function pasteFiles() {
     const cpList = JSON.parse(localStorage.getItem('copy')) || [];
     const mvList = JSON.parse(localStorage.getItem('move')) || [];
     var urlPath = window.location.pathname;
-	urlPath = urlPath.endsWith('/')?urlPath.slice(0, -1):urlPath;
-	if (urlPath===""){ urlPath += "/"; }
+    urlPath = urlPath.endsWith('/')?urlPath.slice(0, -1):urlPath;
+    if (urlPath===""){ urlPath += "/"; }
     let toPaste = cpList;
     let mode = "copy";
     if (toPaste.length === 0){
@@ -261,7 +262,7 @@ function pasteFiles() {
         const success = sendRequest(formData, path,urlPath);
         if (!success){ break; }
     }
-	clearAllMvCp();
+    clearAllMvCp();
     location.reload();
 }
 
