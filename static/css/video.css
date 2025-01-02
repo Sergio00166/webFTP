@@ -72,12 +72,9 @@ body {
 
 video {
     max-height: 90dvh;
-    max-width: 100%;
+    max-width: calc((16/9)*90dvh);
+    width: 100vw;
     aspect-ratio: auto;
-    object-fit: contain !important;
-    margin: 0;
-    padding: 0;
-    display: block;
 }
 canvas {
     position: absolute;
