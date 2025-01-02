@@ -179,14 +179,14 @@ function copyFiles() {
     clearAllMvCp();
     if ((selectMode) && (Object.keys(selectedElements).length > 0)) {
         list = getURLlist();
-        if (list !== []){ set_cp_temp(list); }
+        if (list != []){ set_cp_temp(list); }
     } else { set_cp_temp([window.location.pathname]); }
 }
 function moveFiles() {
     clearAllMvCp();
     if ((selectMode) && (Object.keys(selectedElements).length > 0)) {
         list = getURLlist();
-        if (list !== []){ set_mv_temp(list); }
+        if (list != []){ set_mv_temp(list); }
     } else { set_mv_temp([window.location.pathname]); }
 }
 
