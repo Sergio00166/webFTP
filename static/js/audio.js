@@ -32,47 +32,53 @@ var saved_speed = localStorage.getItem("audioSpeed");
 var random = localStorage.getItem("audioRandom");
 
 
-/* Inicialitate everything */
-
 if (saved_speed != null) {
     audio.playbackRate = parseFloat(saved_speed);
     speedButtons.forEach(item => {
         if (item.getAttribute('data-value') === saved_speed) {
             item.classList.add('speed-active');
-        } else { item.classList.remove('speed-active'); }
+        } else {
+            item.classList.remove('speed-active');
+        }
     });
-} delete saved_speed;
+}
+delete saved_speed;
 
 if (currentMode != null) {
     currentMode = parseInt(currentMode);
     mode.innerHTML = ["1", "»", "&orarr;"][currentMode] || "1";
-} else { currentMode = 0; }
+} else {
+    currentMode = 0;
+}
 
-if (volumeVal === null) { volumeVal = 1; }
-
+if (volumeVal === null) {
+    volumeVal = 1;
+}
 audio.volume = parseFloat(volumeVal);
 currentVol.style.width = volumeVal * 100 + "%";
 
 // Cast value
 if (muted != null) {
-    muted = muted=="true"
-    if (muted){ audio.volume=0; }
-} else { muted = false; }
+    if (muted == "true") {
+        muted = true;
+        audio.volume = 0;
+    } else {
+        muted = false;
+    }
+} else {
+    muted = false;
+}
 // Cast value
 if (random != null) {
-    random = random=="true";
-} else { random = false; }
+    if (random == "true") {
+        random = true;
+    } else {
+        random = false;
+    }
+} else {
+    random = false;
+}
 
-audio.addEventListener('canplay',()=>{
-    handleAudioIcon();
-    audio.play();
-    if (random){ mode.classList.add('lmbsl'); }
-    if (audio.paused) { pause(); }
-    totalDuration.innerHTML = showDuration(audio.duration);
-});
-
-
-/* Rest of the functions */
 
 let mouseDownProgress = false,
     mouseDownVol = false,
@@ -81,6 +87,8 @@ let mouseDownProgress = false,
     touchClientX = 0,
     touchPastDurationWidth = 0,
     touchStartTime = 0;
+
+canPlayInit();
 
 function prev() {
     if (random) {
@@ -108,6 +116,26 @@ document.addEventListener("keydown", handleShorthand);
 audio.addEventListener("play", play);
 audio.addEventListener("pause", pause);
 
+
+function setAudioTime() {
+    if (!(isNaN(audio.duration) || audio.duration === 0)) {
+        totalDuration.innerHTML = showDuration(audio.duration);
+    } else {
+        setTimeout(setAudioTime, 25);
+    }
+}
+
+function canPlayInit() {
+    handleAudioIcon();
+    audio.play();
+    if (random) {
+        mode.classList.add('lmbsl');
+    }
+    if (audio.paused) {
+        pause();
+    }
+    setAudioTime();
+}
 
 
 function play() {
@@ -137,7 +165,9 @@ function saveVolume() {
     localStorage.setItem("audioVolume", volumeVal);
 }
 
-audio.ontimeupdate = ()=>{
+audio.ontimeupdate = handleProgressBar;
+
+function handleProgressBar() {
     currentTime.style.width = (audio.currentTime / audio.duration) * 100 + "%";
     currentDuration.innerHTML = showDuration(audio.currentTime);
     if ('mediaSession' in navigator) {
