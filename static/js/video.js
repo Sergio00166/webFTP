@@ -55,15 +55,15 @@ video.addEventListener('canplay',()=>{
     handleVideoIcon();
     video.play();
     if (video.paused) { pause(); } 
-	if (video.videoWidth < video.videoHeight){
-		var vCont = videoContainer.style;
-		vCont.marginTop = "0 !important";
-		vCont.paddingBottom = "0 !important";
-	}
+    if (video.videoWidth < video.videoHeight){
+        var vCont = videoContainer.style;
+        vCont.marginTop = "0 !important";
+        vCont.paddingBottom = "0 !important";
+    }
     totalDuration.innerHTML = showDuration(video.duration);
     split_timeline_chapters();
     loadTracks();
-	scaleVideo();
+    scaleVideo();
 });
 
 let ass_worker;
@@ -160,10 +160,8 @@ function scaleVideo(){
 
     // Cast value
     if (muted != null) {
-        if (muted == "true") {
-            muted = true;
-            video.volume = 0;
-        } else { muted = false; }
+        muted = muted=="true"
+        if (muted){ audio.volume=0; }
     } else { muted = false; }
 }
 
@@ -336,11 +334,10 @@ function pause() {
     }
 }
 
-function handleProgressBar() {
+video.ontimeupdate = ()=>{
     currentTime.style.width = (video.currentTime / video.duration) * 100 + "%";
     currentDuration.innerHTML = showDuration(video.currentTime);
 }
-video.ontimeupdate = handleProgressBar;
 
 function navigate(e) {
     try {
