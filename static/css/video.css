@@ -69,7 +69,6 @@ body {
 .video-box {
     position: relative;
 }
-
 video {
     max-height: 90dvh;
     max-width: calc((16/9)*90dvh);
@@ -80,11 +79,12 @@ canvas {
     position: absolute;
     object-fit: contain !important;
 }
-
-.video-container:fullscreen video,
-canvas {
+.video-container:fullscreen
+video{
     max-height: 100vh;
+    max-width: 100vw;
 }
+
 .loader {
     width: 108px;
     height: 108px;
