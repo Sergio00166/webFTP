@@ -91,23 +91,23 @@ function changeSubs(value) {
     }
 }
 function fix_aspect_ratio(){
-	if (video.videoWidth<=0 || video.videoHeight<=0){ 
-		setTimeout(fix_aspect_ratio,250);
-	} else {
-		if (video.videoWidth < video.videoHeight){
-			var vCont = videoContainer.style;
-			vCont.marginTop = "0 !important";
-			vCont.paddingBottom = "0 !important";
-		} scaleVideo();
-	}
+    if (video.videoWidth<=0 || video.videoHeight<=0){ 
+        setTimeout(fix_aspect_ratio,100);
+    } else {
+        if (video.videoWidth < video.videoHeight){
+            var vCont = videoContainer.style;
+            vCont.marginTop = "0 !important";
+            vCont.paddingBottom = "0 !important";
+        } scaleVideo();
+    }
 }
 function scaleVideo(){
   const vc = videoContainer;
   const videoWidth = video.videoWidth;
   const videoHeight = video.videoHeight;
   const scale = Math.min(
-	vc.offsetWidth/videoWidth,
-	vc.offsetHeight/videoHeight
+    vc.offsetWidth/videoWidth,
+    vc.offsetHeight/videoHeight
   ); // Scale the video keeping aspect ratio
   video.style.width  = (videoWidth*scale)+"px";
   video.style.height = (videoHeight*scale)+"px";
@@ -166,8 +166,8 @@ function scaleVideo(){
     handleVideoIcon();
     video.play();
     if (video.paused) { pause(); } 
-	setVideoTime();
-	fix_aspect_ratio();
+    setVideoTime();
+    fix_aspect_ratio();
 }
 
 
@@ -480,8 +480,8 @@ function getchptname(timeInSeconds) {
 touchActive = false;
 let fixtouch;
 document.addEventListener('touchstart', ()=> {
-	clearTimeout(fixtouch);
-	touchActive = true;
+    clearTimeout(fixtouch);
+    touchActive = true;
 });
 document.addEventListener('touchend', ()=> {
     clearTimeout(fixtouch);
