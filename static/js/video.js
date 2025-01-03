@@ -161,7 +161,7 @@ function scaleVideo(){
     // Cast value
     if (muted != null) {
         muted = muted=="true"
-        if (muted){ audio.volume=0; }
+        if (muted){ video.volume=0; }
     } else { muted = false; }
 }
 
