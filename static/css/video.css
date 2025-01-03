@@ -89,8 +89,8 @@ body {
 }
 .state-btn {
     font-size: 2.3rem;
-    aspect-ratio: 1 / 1;
     height: 80px;
+    width: 80px;
     cursor: pointer;
     border-radius: 50%;
     display: flex;
@@ -99,8 +99,6 @@ body {
     transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     background: rgba(36, 36, 36, 0.667);
     opacity: 0;
-    transform: scale(0);
-    display: flex;
     position: absolute;
     justify-content: center;
 }
