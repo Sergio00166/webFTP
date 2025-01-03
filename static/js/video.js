@@ -2,7 +2,7 @@
 
 let mouse_ctrl_delay = 1500;
 
-const video = document.querySelector("video");
+var video = document.querySelector("video");
 const volume = document.querySelector(".volume");
 const currentTime = document.querySelector(".current-time");
 const duration = document.querySelector(".duration");
@@ -10,7 +10,7 @@ const buffer = document.querySelector(".buffer");
 const totalDuration = document.querySelector(".total-duration");
 const currentDuration = document.querySelector(".current-duration");
 const controls = document.querySelector(".controls");
-const videoContainer = document.querySelector(".video-container");
+var videoContainer = document.querySelector(".video-container");
 const currentVol = document.querySelector(".current-vol");
 const totalVol = document.querySelector(".max-vol");
 const mainState = document.querySelector(".main-state");
@@ -49,25 +49,18 @@ var subs_legacy = localStorage.getItem("subsLegacy");
 var subtitleId = 0;
 
 
-/* Subtittles Zone */
+/* Start functions zone */
 
 let ass_worker;
-
 function crate_ass_worker(url) {
     return new JASSUB({
-        video: video,
-        canvas: canvas,
-        subUrl: url,
+        video: video, canvas: canvas, subUrl: url,
         workerUrl: '/?static=jassub/worker.js',
         wasmUrl: '/?static=jassub/worker.wasm',
-        useLocalFonts: true,
-        fallbackFont: "arial",
-        availableFonts: {
-            'arial': '/?static=jassub/arial.ttf'
-        }
+        useLocalFonts: true, fallbackFont: "arial",
+        availableFonts: { 'arial': '/?static=jassub/arial.ttf' }
     });
 }
-
 function webvtt_subs(url) {
     var track = document.createElement('track');
     track.kind = 'subtitles';
@@ -76,7 +69,6 @@ function webvtt_subs(url) {
     track.mode = 'showing';
     video.appendChild(track);
 }
-
 function is_SSA_subs(url) {
     const xhr = new XMLHttpRequest();
     xhr.open('HEAD', url, false);
@@ -84,31 +76,43 @@ function is_SSA_subs(url) {
         xhr.send();
         const mimeType = xhr.getResponseHeader("Content-Type");
         return mimeType==="application/x-substation-alpha";
-    } catch (e) {
-        return false;
-    }
+    } catch (e){ return false; }
 }
-
 function changeSubs(value) {
     var existingTrack = video.querySelector('track[kind="subtitles"]');
-    if (existingTrack) {
-        existingTrack.parentNode.removeChild(existingTrack);
-    }
-    if (ass_worker) {
-        ass_worker.destroy();
-    }
+    if (existingTrack){ existingTrack.parentNode.removeChild(existingTrack); }
+    if (ass_worker) { ass_worker.destroy(); }
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
     if (value > -1) {
         url = window.location.pathname+"?subs="+value;
-        if (!is_SSA_subs(url)) {
-            webvtt_subs(url);
-        } else if (subs_legacy) {
-            webvtt_subs(url+"legacy");
-        } else {
-            ass_worker = crate_ass_worker(url);
-        }
+        if (!is_SSA_subs(url)) { webvtt_subs(url); }
+        else if (subs_legacy) { webvtt_subs(url+"legacy"); }
+        else { ass_worker = crate_ass_worker(url); }
     }
 }
+function fix_aspect_ratio(){
+	if (video.videoWidth<=0 || video.videoHeight<=0){ 
+		setTimeout(fix_aspect_ratio,250);
+	} else {
+		if (video.videoWidth < video.videoHeight){
+			var vCont = videoContainer.style;
+			vCont.marginTop = "0 !important";
+			vCont.paddingBottom = "0 !important";
+		} scaleVideo();
+	}
+}
+function scaleVideo(){
+  const vc = videoContainer;
+  const videoWidth = video.videoWidth;
+  const videoHeight = video.videoHeight;
+  const scale = Math.min(
+	vc.offsetWidth/videoWidth,
+	vc.offsetHeight/videoHeight
+  ); // Scale the video keeping aspect ratio
+  video.style.width  = (videoWidth*scale)+"px";
+  video.style.height = (videoHeight*scale)+"px";
+} window.addEventListener('resize', scaleVideo);
+
 
 /* Inicialitate everything */
 {
@@ -116,19 +120,14 @@ function changeSubs(value) {
         if (subs_legacy == "true") {
             subs_legacy = true;
             settingsBtn.classList.add('lmbsl');
-        } else {
-            subs_legacy = false;
-        }
-    } else {
-        subs_legacy = false;
-    }
+        } else { subs_legacy = false; }
+    } else { subs_legacy = false; }
 
     const text = localStorage.getItem("videoSubs");
 
     for (var i = 0; i < subtitleSelect.options.length; i++) {
         if (subtitleSelect.options[i].text === text) {
-            subtitleId = i;
-            break;
+            subtitleId = i;  break;
         }
     }
     subtitleSelect.selectedIndex = subtitleId;
@@ -140,25 +139,18 @@ function changeSubs(value) {
         video.playbackRate = parseFloat(saved_speed);
         for (let i = 0; i < speedSelect.options.length; i++) {
             if (speedSelect.options[i].value === saved_speed) {
-                speedSelect.selectedIndex = i;
-                break;
+                speedSelect.selectedIndex = i;  break;
             }
         }
-    } else {
-        speedSelect.selectedIndex = 3;
-    }
+    } else { speedSelect.selectedIndex = 3; }
 
     if (currentMode != null) {
         currentMode = parseInt(currentMode);
         mode.innerHTML = ["1", "»", "&orarr;"][currentMode] || "1";
-    } else {
-        currentMode = 0;
-    }
+    } else { currentMode = 0; }
 
     var volumeVal = localStorage.getItem("videoVolume");
-    if (volumeVal === null) {
-        volumeVal = 1;
-    }
+    if (volumeVal === null) { volumeVal = 1; }
     video.volume = parseFloat(volumeVal);
     currentVol.style.width = volumeVal * 100 + "%";
 
@@ -167,17 +159,19 @@ function changeSubs(value) {
         if (muted == "true") {
             muted = true;
             video.volume = 0;
-        } else {
-            muted = false;
-        }
-    } else {
-        muted = false;
-    }
+        } else { muted = false; }
+    } else { muted = false; }
+}
+{
+    handleVideoIcon();
+    video.play();
+    if (video.paused) { pause(); } 
+	setVideoTime();
+	fix_aspect_ratio();
 }
 
-canPlayInit();
 
-// Rest of the functions
+/* Rest of the functions */
 
 let mouseDownProgress = false,
     mouseDownVol = false,
@@ -227,20 +221,6 @@ function setVideoTime() {
         loadTracks();
     } else {
         setTimeout(setVideoTime, 25);
-    }
-}
-
-function canPlayInit() {
-    handleVideoIcon();
-    video.play();
-    if (video.paused) {
-        pause();
-    } setVideoTime();
-    // Dont allow the responsive put the controls outside the
-    // video container if aspect ration of the video is <1:1
-    if (video.videoWidth < video.videoHeight) {
-        videoContainer.styles.marginTop = "0 !important";
-        videoContainer.styles.paddingBottom = "0 !important";
     }
 }
 
@@ -312,7 +292,6 @@ duration.addEventListener("touchmove", handleTouchNavigate);
 
 
 let cursorTimeout;
-
 function showCursor() {
     clearTimeout(cursorTimeout);
     document.body.style.cursor = 'auto';
@@ -325,22 +304,17 @@ function showCursor() {
     }
 }
 
-videoContainer.addEventListener("fullscreenchange", () => {
-    videoContainer.classList.toggle("fullscreen", document.fullscreenElement);
-    if (video.videoWidth >= video.videoHeight) {
-        screen.orientation.lock('landscape').catch(() => {});
-    } else {
-        screen.orientation.lock('portrait').catch(() => {});
-    }
-    if (ass_worker) {
-        setTimeout(() => {
-            ass_worker.resize(force = true);
-        }, 1000);
-    }
-});
-
 mainState.addEventListener("click", toggleMainState);
 mainState.addEventListener("animationend", handleMainSateAnimationEnd);
+
+videoContainer.addEventListener("fullscreenchange",()=> {
+    videoContainer.classList.toggle("fullscreen", document.fullscreenElement);
+    if (video.videoWidth >= video.videoHeight){
+        screen.orientation.lock('landscape').catch(()=>{});
+    } else {
+        screen.orientation.lock('portrait').catch(()=>{});
+    }
+});
 
 volume.addEventListener("mouseenter", () => {
     muted ? totalVol.classList.remove("show") : totalVol.classList.add("show");

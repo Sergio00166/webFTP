@@ -17,6 +17,18 @@ video::-webkit-media-text-track-display {
 video::-webkit-media-controls { display: none !important; }
 video::-moz-media-controls    { display: none !important; }
 
+.video-container {
+    position: relative;
+    width: calc((16/9)*90dvh);
+    color: #fff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.video-box { position: relative; }
+canvas { position: absolute; }
+
 img {
     width: 20px;
     height: 20px;
@@ -55,34 +67,6 @@ body {
     background: #000000;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
-}
-.video-container {
-    position: relative;
-    width: calc((16/9)*90dvh);
-    color: #fff;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.video-box {
-    position: relative;
-}
-video {
-    max-height: 90dvh;
-    max-width: calc((16/9)*90dvh);
-    width: 100vw;
-    aspect-ratio: auto;
-}
-canvas {
-    position: absolute;
-    object-fit: contain !important;
-}
-.video-container:fullscreen
-video{
-    max-height: 100vh;
-    max-width: 100vw;
 }
 
 .loader {
