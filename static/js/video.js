@@ -511,11 +511,15 @@ function handleMousemove(e) {
             const percent = (width / rect.width) * 100;
             hoverTime.style.width = `${percent}%`;
             const hovtime = (video.duration * percent) / 100;
-            hoverDuration.innerHTML = showDuration(hovtime) + (getchptname(hovtime) ? `<br>${getchptname(hovtime)}` : "");
-            hoverDuration.style.left = `${width-hoverDuration.offsetWidth/2}px`;
-            hoverDuration.style.display = 'block';
-            hoverDuration.style.visibility = "visible";
-        } else {
+            hoverDuration.innerHTML = showDuration(hovtime);
+            const chapter = getchptname(hovtime);
+            if (chapter) { hoverDuration.innerHTML += "<br>"+chapter; }
+            const offset = hoverDuration.offsetWidth/2;
+            var hvs = hoverDuration.style;
+            hvs.left = (width-offset)+"px";
+            hvs.display = 'block';
+            hvs.visibility = offset===0 ? "hidden":"visible";
+       } else {
             e.preventDefault();
         }
     }
