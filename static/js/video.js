@@ -101,6 +101,7 @@ function fix_aspect_ratio(){
         } scaleVideo();
     }
 }
+
 function scaleVideo(){
   const vc = videoContainer;
   const videoWidth = video.videoWidth;
@@ -111,7 +112,9 @@ function scaleVideo(){
   ); // Scale the video keeping aspect ratio
   video.style.width  = (videoWidth*scale)+"px";
   video.style.height = (videoHeight*scale)+"px";
-} window.addEventListener('resize', scaleVideo);
+}
+window.addEventListener('resize', scaleVideo);
+window.addEventListener('fullscreenchange', scaleVideo);
 
 
 /* Inicialitate everything */

@@ -19,6 +19,7 @@ video::-moz-media-controls    { display: none !important; }
 
 .video-container {
     position: relative;
+    width: calc((16/9)*90vh);
     width: calc((16/9)*90dvh);
     color: #fff;
     overflow: hidden;
@@ -464,7 +465,8 @@ button:focus { outline: none; }
 
 @media (min-aspect-ratio: 1/1) {
     .video-container {
-        aspect-ratio: 16/9;
+        height: 90vh;
+        height: 90dvh;
     }
     @media (max-width: 430px) {
         .video-container {
