@@ -475,7 +475,6 @@ function getchptname(timeInSeconds) {
     }
 }
 
-
 // Prevent mouse events from triggering after a touch event
 touchActive = false;
 let fixtouch;
@@ -489,7 +488,6 @@ document.addEventListener('touchend', ()=> {
         touchActive = false
     }, 500);
 });
-
 
 
 function handleMousemove(e) {
@@ -754,12 +752,6 @@ function split_timeline_chapters() {
     });
 }
 
-touchBox.addEventListener("click",(e)=>{
-    e.preventDefault();
-    toggleMainState();
-    showCursor();
-});
-
 // Show menu if screen movement (touch)
 videoContainer.addEventListener('touchmove',()=>{
     touchFix = true;
@@ -770,7 +762,6 @@ videoContainer.addEventListener('touchmove',()=>{
 let lastTouchTime = 0;
 let touchTimeout;
 let touchFix;
-
 function double_touch(e) {
     e.preventDefault();
     clearTimeout(touchTimeout);
@@ -797,9 +788,13 @@ function double_touch(e) {
     }
     lastTouchTime = now;
 }
-video.addEventListener('touchend', double_touch);
-canvas.addEventListener('touchend', double_touch);
 
+touchBox.addEventListener("click",(e)=>{
+    e.preventDefault();
+    toggleMainState();
+    showCursor();
+});
+touchBox.addEventListener('touchend', double_touch);
 
 var mber = undefined;
 var sttbtnpress = false;
