@@ -771,7 +771,7 @@ function double_touch(e) {
     }
     const now = Date.now();
     const touchInterval = now - lastTouchTime;
-    const divRect = video.getBoundingClientRect();
+    const divRect = touchBox.getBoundingClientRect();
     if (touchInterval < 250) {
         const touchX = event.changedTouches[0].clientX;
         const centerX = divRect.left + (divRect.width / 2);
