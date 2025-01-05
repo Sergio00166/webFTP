@@ -608,7 +608,7 @@ function handleShorthand(e) {
         return;
     }
     if (e.code === 'F11') {
-        document.documentElement.requestFullscreen();
+        toggleFullscreen();
         return;
     }
     if (e.key.match(/[0-9]/gi)) {
