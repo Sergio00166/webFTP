@@ -30,6 +30,11 @@ video::-moz-media-controls    { display: none !important; }
 }
 .video-box { position: relative; }
 canvas { position: absolute; }
+#touch-box {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
 
 img {
     width: 20px;

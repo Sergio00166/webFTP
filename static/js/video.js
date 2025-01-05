@@ -41,6 +41,7 @@ const downloadLink = document.getElementById("download");
 const prevLink = document.getElementById("prev");
 const nextLink = document.getElementById("next");
 const canvas = document.querySelector("canvas");
+const touchBox = document.getElementById("touch-box");
 
 var mode = document.getElementById("mode");
 var currentMode = localStorage.getItem("videoMode");
@@ -238,8 +239,6 @@ function handleVideoEnded() {
 // Video Event Listeners
 video.addEventListener("play", play);
 video.addEventListener("pause", pause);
-// Disable the video buffered representation due to weird bugs
-//video.addEventListener("progress", handleProgress);
 
 video.addEventListener("waiting", function () {
     loader.classList.add("show-state");
@@ -755,20 +754,14 @@ function split_timeline_chapters() {
     });
 }
 
-
-canvas.addEventListener("click", (e) => {
-    e.preventDefault();
-    toggleMainState();
-    showCursor();
-});
-video.addEventListener("click", (e) => {
+touchBox.addEventListener("click",(e)=>{
     e.preventDefault();
     toggleMainState();
     showCursor();
 });
 
 // Show menu if screen movement (touch)
-videoContainer.addEventListener('touchmove', () => {
+videoContainer.addEventListener('touchmove',()=>{
     touchFix = true;
     controls.classList.add("show-controls");
     hideControls(2500);
