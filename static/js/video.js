@@ -103,15 +103,13 @@ function fix_aspect_ratio(){
 }
 
 function scaleVideo(){
-  const vc = videoContainer;
-  const videoWidth = video.videoWidth;
-  const videoHeight = video.videoHeight;
-  const scale = Math.min(
-    vc.offsetWidth/videoWidth,
-    vc.offsetHeight/videoHeight
-  ); // Scale the video keeping aspect ratio
-  video.style.width  = (videoWidth*scale)+"px";
-  video.style.height = (videoHeight*scale)+"px";
+    const cw = videoContainer.offsetWidth;
+    const ch = videoContainer.offsetHeight;
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+    const scale = Math.min( cw/vw,ch/vh );
+    video.style.width  = (vw*scale)+"px";
+    video.style.height = (vh*scale)+"px";
 }
 window.addEventListener('resize', scaleVideo);
 window.addEventListener('fullscreenchange', scaleVideo);
