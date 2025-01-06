@@ -78,7 +78,6 @@ def explorer(path):
 
 
 
-
 @app.route('/', methods=['GET','POST'])
 # Here we show the root dir, serve the static files
 # or send the root dir as .tar
@@ -96,7 +95,7 @@ def index():
         # Check if static page is requested
         if "static" in request.args:
             path = request.args["static"]
-            return send_file( safe_path(path,sroot) )
+            return send_file( safe_path(path,sroot),cache=True )
 
         # Else show the root directory
         proto = request.headers.get('X-Forwarded-Proto',request.scheme)

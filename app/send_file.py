@@ -12,7 +12,7 @@ import tarfile
 RANGE_REGEX = re_compile(r"bytes=(\d+)-(\d*)")
 
 
-def send_file(file_path,mimetype=None):
+def send_file(file_path,mimetype=None,cache=False):
     file_size = getsize(file_path)
     range_header = request.headers.get('Range')
     
@@ -26,8 +26,9 @@ def send_file(file_path,mimetype=None):
 
         headers = {
             'Content-Range': content_range, 'Accept-Ranges': 'bytes',
-            'Content-Length': str(sum([end - start + 1 for start, end in ranges])) 
+            'Content-Length': str(sum([end - start + 1 for start, end in ranges]))
         }
+        if cache: headers['Cache-Control'] = 'public, max-age=3600'
         if not mimetype is None: headers['Content-Type'] = mimetype
         
         return Response(generate(file_path,ranges), status=206, headers=headers)
