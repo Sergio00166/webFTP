@@ -12,7 +12,7 @@ import tarfile
 RANGE_REGEX = re_compile(r"bytes=(\d+)-(\d*)")
 
 
-def send_file(file_path,mimetype=None,cache=False):
+def send_file(file_path,mimetype=None):
     file_size = getsize(file_path)
     range_header = request.headers.get('Range')
     
