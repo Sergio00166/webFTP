@@ -67,12 +67,10 @@ def explorer(path):
             if not request.path.endswith('/') and client!="json":
                 return redirect(request.path+'/')
             
-            proto = request.headers.get('X-Forwarded-Proto', request.scheme)
-            hostname = proto+"://"+request.host+"/"
             sort = request.args["sort"] if "sort" in request.args else ""
             
             if "tar" in request.args: return send_dir(path,root,ACL)
-            return directory(path,root,folder_size,sort,client,hostname,ACL)
+            return directory(path,root,folder_size,sort,client,ACL)
   
     except Exception as e: return error(e,client)
 
@@ -98,13 +96,11 @@ def index():
             return send_file( safe_path(path,sroot),cache=True )
 
         # Else show the root directory
-        proto = request.headers.get('X-Forwarded-Proto',request.scheme)
-        hostname = proto+"://"+request.host+"/"
         path = safe_path("/",root) # Check if we can access it
         sort = request.args["sort"] if "sort" in request.args else ""
 
         if "tar" in request.args: return send_dir(path,root,ACL,"index")
-        return directory(path,root,folder_size,sort,client,hostname,ACL)
+        return directory(path,root,folder_size,sort,client,ACL)
 
     except Exception as e: return error(e,client)
 
