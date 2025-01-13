@@ -2,9 +2,10 @@
 
 from os.path import commonpath,join,isdir,relpath,abspath
 from os.path import getmtime,getsize,exists,normpath
+from flask import render_template,request,redirect
 from os import listdir,sep,scandir,access,R_OK
+from urllib.parse import urlparse, urlunparse
 from datetime import datetime as dt
-from flask import render_template
 from json import load as jsload
 from time import sleep as delay
 from sys import path as pypath
@@ -200,3 +201,10 @@ def error(e, client):
         printerr(e) # Log the error to cli
         if client == "json": return "[]", 500
         return render_template('500.html'), 500
+
+
+def redirect_no_query():
+    parsed_url = urlparse(request.url)
+    return redirect(urlunparse(
+    ('','',parsed_url.path,'','','')))
+

@@ -1,10 +1,9 @@
 #Code by Sergio00166
 
+from functions import validate_acl, safe_path, redirect_no_query
 from shutil import rmtree, move, copy, copytree, SameFileError
 from os.path import exists, isdir, dirname, relpath, basename
 from flask import render_template, redirect, request
-from urllib.parse import urlparse, urlunparse
-from functions import validate_acl, safe_path
 from os import sep, makedirs, remove, walk
 
 
@@ -29,13 +28,6 @@ def check_rec_chg_parent(path, ACL, root, new_parent):
             validate_acl(item_path, ACL, True)
 
 
-def redirect_no_query():
-    parsed_url = urlparse(request.url)
-    return redirect(urlunparse(
-        (parsed_url.scheme,parsed_url.netloc,
-         parsed_url.path, '', '', '')
-        ))
-
 def upload_worker(ACL, r_path, filename, root, file=None, dupmkd=False):
     try:
         path = safe_path(r_path+sep+filename, root, True)
@@ -59,7 +51,7 @@ def upload_worker(ACL, r_path, filename, root, file=None, dupmkd=False):
         else:
             makedirs(dirname(path), exist_ok=True)
             file.save(path)
-
+    
     except PermissionError:
         return "Permission denied for (some) item(s)"
     except:
