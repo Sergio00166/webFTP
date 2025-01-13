@@ -1,8 +1,7 @@
-
 # Code by Sergio00166
 
 from functions import get_file_type,getclient,update_rules
-from flask import redirect,request,Flask
+from flask import redirect,request,Flask,Request
 from actions import *
 from secrets import token_hex
 from threading import Thread
@@ -12,6 +11,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sys import path
 from files import addfile,delfile,move_copy
 from send_file import send_file,send_dir
+from werkzeug.formparser import FormDataParser
 
 
 def init():
@@ -26,7 +26,6 @@ def init():
     # Create the main app flask
     app = Flask(__name__,static_folder=sroot,template_folder=templates)
     return app,folder_size,root
-
 
 app,folder_size,root = init()
 # Change this to an static value for multi-worker scenarios
@@ -44,6 +43,13 @@ app.config['PERMANENT_SESSION_LIFETIME'] = 3600
 db = SQLAlchemy(app)
 app.config['SESSION_SQLALCHEMY'] = db
 Session(app)
+
+# Dont fuck off when uploading
+class uRequest(Request):
+    max_content_length = None
+    max_form_memory_size = None
+    max_form_parts = None
+app.request_class = uRequest
 
 # Define basic stuff
 sroot = app.static_folder
