@@ -1,18 +1,18 @@
 # Code by Sergio00166
 
 from functions import get_file_type,getclient,update_rules
+from override import CustomFormDataParser,CustomRequest
+from files import upfile,updir,mkdir,delfile,move_copy
 from flask import redirect,request,Flask,Request
-from actions import *
-from secrets import token_hex
-from threading import Thread
+from send_file import send_file,send_dir
+from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
 from os import sep,getenv,urandom
-from flask_sqlalchemy import SQLAlchemy
+from secrets import token_hex
+from threading import Thread
+from actions import *
 from sys import path
-from files import addfile,delfile,move_copy
-from send_file import send_file,send_dir
-from werkzeug.formparser import FormDataParser
-import typing as t
+
 
 def init():
     # Set the paths of templates and static
@@ -44,12 +44,14 @@ db = SQLAlchemy(app)
 app.config['SESSION_SQLALCHEMY'] = db
 Session(app)
 
-# Dont fuck off when uploading
-class uRequest(Request):
-    max_content_length = None
-    max_form_memory_size = None
-    max_form_parts = None
-app.request_class = uRequest
+# Modify default behaviour
+app.request_class = CustomRequest
+app.request_class.\
+form_data_parser_class =\
+CustomFormDataParser
+
+# Get current parser object
+dps = app.request_class.form_data_parser_class
 
 # Define basic stuff
 sroot = app.static_folder

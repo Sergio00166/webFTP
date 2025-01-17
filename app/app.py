@@ -21,7 +21,16 @@ def explorer(path):
         
         # Files management stuff for users
         if "add" in request.args:
-            return addfile(path,ACL,root)
+            return render_template("upload.html")
+
+        if "upfile" in request.args:
+            return upfile(dps,path,ACL,root)
+        
+        if "updir" in request.args:
+            return updir(dps,path,ACL,root)
+
+        if "mkdir" in request.args:
+            return mkdir(path,ACL,root)
 
         if "delete" in request.args:
             return delfile(path,ACL,root)
@@ -90,7 +99,16 @@ def index():
 
         # Files management stuff for users
         if "add" in request.args:
-            return addfile("",ACL,root)
+            return render_template("upload.html")
+    
+        if "upfile" in request.args:
+            return upfile(dps,"",ACL,root)
+        
+        if "updir" in request.args:
+            return updir(dps,"",ACL,root)
+
+        if "mkdir" in request.args:
+            return mkdir("",ACL,root)
 
         # Check if static page is requested
         if "static" in request.args:
