@@ -10,8 +10,8 @@ from init import *
 # For showing a directory, launching the custom media players
 # or send in raw mode (or stream) files or send the dir as .tar
 def explorer(path):
-    client = getclient(request)
-    try:
+        client = getclient(request)
+    #try:
         # User login/logout stuff
         if "logout" in request.args: return logout()
         if "login" in request.args:  return login(USERS)
@@ -24,10 +24,10 @@ def explorer(path):
             return render_template("upload.html")
 
         if "upfile" in request.args:
-            return upfile(dps,path,ACL,root)
+            return upfile(path,ACL,root)
         
         if "updir" in request.args:
-            return updir(dps,path,ACL,root)
+            return updir(path,ACL,root)
 
         if "mkdir" in request.args:
             return mkdir(path,ACL,root)
@@ -83,7 +83,7 @@ def explorer(path):
             if "tar" in request.args: return send_dir(path,root,ACL)
             return directory(path,root,folder_size,sort,client,hostname,ACL)
   
-    except Exception as e: return error(e,client)
+    #except Exception as e: return error(e,client)
 
 
 
@@ -91,8 +91,8 @@ def explorer(path):
 # Here we show the root dir, serve the static files
 # or send the root dir as .tar
 def index():
-    client = getclient(request)
-    try:
+        client = getclient(request)
+    #try:
         # User login/logout stuff
         if "logout" in request.args: return logout()
         if "login"  in request.args: return login(USERS)
@@ -102,10 +102,10 @@ def index():
             return render_template("upload.html")
     
         if "upfile" in request.args:
-            return upfile(dps,"",ACL,root)
+            return upfile("",ACL,root)
         
         if "updir" in request.args:
-            return updir(dps,"",ACL,root)
+            return updir("",ACL,root)
 
         if "mkdir" in request.args:
             return mkdir("",ACL,root)
@@ -124,5 +124,5 @@ def index():
         if "tar" in request.args: return send_dir(path,root,ACL,"index")
         return directory(path,root,folder_size,sort,client,hostname,ACL)
 
-    except Exception as e: return error(e,client)
+    #except Exception as e: return error(e,client)
 
