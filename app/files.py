@@ -5,7 +5,6 @@ from shutil import rmtree, move, copy, copytree, SameFileError
 from os.path import exists, isdir, relpath, basename
 from flask import render_template, redirect, request
 from os import sep, remove, walk, makedirs
-from custom_upload import save_upload
 
 
 def check_recursive(path, ACL, root, write=False):
@@ -64,17 +63,20 @@ def mkdir(path, ACL, root):
     )
 
 
-def handle_upload(path, ACL, root, action, up_type):
-    if request.method != "POST": redirect_no_query()
+def handle_upload(dps, path, ACL, root, action, up_type):
 
+    if request.method != "POST":
+        redirect_no_query()
+
+    dps.set_params(dps, ACL, path, root)
     safe_path(path, root)
     validate_acl(path, ACL, True)
     error = None
-    
-    try: save_upload(request, path, root, ACL)
+
+    try: request.form.get("filename")
     except PermissionError:
         error = "You don't have permission to upload some files."
-    except ValueError:
+    except NameError:
         error = f"Please select {up_type} to upload."
     except SameFileError:
         error = "(Some) item(s) already exists."
@@ -88,11 +90,11 @@ def handle_upload(path, ACL, root, action, up_type):
     )
     
 
-def upfile(path, ACL, root):
-    return handle_upload(path, ACL, root, "upFile", "file(s)")
+def upfile(dps, path, ACL, root):
+    return handle_upload(dps, path, ACL, root, "upFile", "file(s)")
 
-def updir(path, ACL, root):
-    return handle_upload(path, ACL, root, "upDir", "dir")
+def updir(dps, path, ACL, root):
+    return handle_upload(dps, path, ACL, root, "upDir", "dir")
 
 
 def delfile(path, ACL, root):

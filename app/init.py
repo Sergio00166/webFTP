@@ -1,6 +1,7 @@
 # Code by Sergio00166
 
 from functions import get_file_type,getclient,update_rules
+from override import CustomFormDataParser,CustomRequest
 from files import upfile,updir,mkdir,delfile,move_copy
 from flask import redirect,request,Flask,Request
 from send_file import send_file,send_dir
@@ -42,6 +43,15 @@ app.config['PERMANENT_SESSION_LIFETIME'] = 3600
 db = SQLAlchemy(app)
 app.config['SESSION_SQLALCHEMY'] = db
 Session(app)
+
+# Modify default behaviour
+app.request_class = CustomRequest
+app.request_class.\
+form_data_parser_class =\
+CustomFormDataParser
+
+# Get current parser object
+dps = app.request_class.form_data_parser_class
 
 # Define basic stuff
 sroot = app.static_folder

@@ -24,10 +24,10 @@ def explorer(path):
             return render_template("upload.html")
 
         if "upfile" in request.args:
-            return upfile(path,ACL,root)
+            return upfile(dps,path,ACL,root)
         
         if "updir" in request.args:
-            return updir(path,ACL,root)
+            return updir(dps,path,ACL,root)
 
         if "mkdir" in request.args:
             return mkdir(path,ACL,root)
@@ -102,10 +102,10 @@ def index():
             return render_template("upload.html")
     
         if "upfile" in request.args:
-            return upfile("",ACL,root)
+            return upfile(dps,"",ACL,root)
         
         if "updir" in request.args:
-            return updir("",ACL,root)
+            return updir(dps,"",ACL,root)
 
         if "mkdir" in request.args:
             return mkdir("",ACL,root)
