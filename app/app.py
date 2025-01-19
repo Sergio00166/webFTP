@@ -6,6 +6,15 @@
 from init import *
 
 
+def add_page(option,dps,path,ACL,root):
+    if option=="add":
+        validate_acl(path, ACL, True)
+        return render_template("upload.html")
+    if option=="upfile": return upfile(dps,path,ACL,root)
+    if option=="updir":  return updir(dps,path,ACL,root)
+    if "mkdir": return mkdir(path,ACL,root)
+
+
 @app.route('/<path:path>', methods=['GET','POST'])
 # For showing a directory, launching the custom media players
 # or send in raw mode (or stream) files or send the dir as .tar
@@ -20,19 +29,9 @@ def explorer(path):
         if path.endswith("/"): path = path[:-1]
         
         # Files management stuff for users
-        if "add" in request.args:
-            validate_acl(path, ACL, True)
-            return render_template("upload.html")
-
-        if "upfile" in request.args:
-            return upfile(dps,path,ACL,root)
-        
-        if "updir" in request.args:
-            return updir(dps,path,ACL,root)
-
-        if "mkdir" in request.args:
-            return mkdir(path,ACL,root)
-
+        return add_page(
+            option,dps,path,ACL,root
+        )
         if "delete" in request.args:
             return delfile(path,ACL,root)
 
@@ -99,19 +98,9 @@ def index():
         if "login"  in request.args: return login(USERS)
 
         # Files management stuff for users
-        if "add" in request.args:
-            validate_acl("", ACL, True)
-            return render_template("upload.html")
-    
-        if "upfile" in request.args:
-            return upfile(dps,"",ACL,root)
-        
-        if "updir" in request.args:
-            return updir(dps,"",ACL,root)
-
-        if "mkdir" in request.args:
-            return mkdir("",ACL,root)
-
+        return add_page(
+            option,dps,"",ACL,root
+        )
         # Check if static page is requested
         if "static" in request.args:
             path = request.args["static"]
@@ -127,4 +116,3 @@ def index():
         return directory(path,root,folder_size,sort,client,hostname,ACL)
 
     except Exception as e: return error(e,client)
-
