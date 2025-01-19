@@ -81,9 +81,9 @@ async function executeDownloads() {
             const url = div.getAttribute('data-value');
             if (url) {
                 if (div.hasAttribute('dir')) {
-					if (!url.endsWith("/"))
-					{ url += "/"; }
-					mode = '?tar';
+                    if (!url.endsWith("/"))
+                    { url += "/"; }
+                    mode = '?tar';
                 } else { mode = '?raw'; }
                 downloadURL(url+mode);
                 await delay(100);
@@ -92,7 +92,7 @@ async function executeDownloads() {
     } else {
         var url = new URL(window.location.href).pathname;
         if (url=="/" || url=="") { url = ''; }
-		if (!url.endsWith("/")   { url += "/"; }
+        if (!url.endsWith("/"))  { url += "/"; }
         const newURL = url+'?tar';
         downloadURL(newURL);
     }
