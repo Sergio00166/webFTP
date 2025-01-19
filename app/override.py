@@ -9,9 +9,6 @@ from os import sep, makedirs
 from os.path import dirname, exists
 from shutil import SameFileError
 
-# 256 MB of write buffer
-write_buffer = 256*(1024**2)
-
 
 class CustomRequest(Request):
     max_content_length = None
@@ -38,7 +35,7 @@ def custom_stream_factory(
     validate_acl(parent+"/"+filename, ACL, True)
     makedirs(dirname(path), exist_ok=True)
 
-    return open(path,"wb",buffering=write_buffer)
+    return open(path,"wb")
 
 
 
