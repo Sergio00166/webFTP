@@ -1,7 +1,7 @@
 # Code by Sergio00166
 
 from functions import get_file_type,getclient,update_rules
-from override import CustomFormDataParser,CustomRequest
+from override import CustomFormDataParser
 from files import upfile,updir,mkdir,delfile,move_copy
 from flask import redirect,request,Flask,Request
 from send_file import send_file,send_dir
@@ -45,7 +45,6 @@ app.config['SESSION_SQLALCHEMY'] = db
 Session(app)
 
 # Modify default behaviour
-app.request_class = CustomRequest
 app.request_class.\
 form_data_parser_class =\
 CustomFormDataParser

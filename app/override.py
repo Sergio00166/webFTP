@@ -10,12 +10,6 @@ from os.path import dirname, exists
 from shutil import SameFileError
 
 
-class CustomRequest(Request):
-    max_content_length = None
-    max_form_memory_size = None
-    max_form_parts = None
-
-
 t_parse_result = tuple[
     t.IO[bytes], MultiDict[str, str],
     MultiDict[str, FileStorage]
@@ -66,12 +60,14 @@ class CustomFormDataParser(FormDataParser):
         )
         parser = MultiPartParser(
             stream_factory = mod_csf,
-            max_form_memory_size=self.max_form_memory_size,
-            max_form_parts=self.max_form_parts,
-            cls=self.cls,
+            max_form_memory_size=None,
+            max_form_parts=None,
+            cls=self.cls
         )
         boundary = options.get("boundary", "").encode("ascii")
         if not boundary: raise ValueError("Missing boundary")
         form, files = parser.parse(stream, boundary, content_length)
         return stream, form, files
+
+
 
