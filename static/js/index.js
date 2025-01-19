@@ -81,7 +81,7 @@ async function executeDownloads() {
             const url = div.getAttribute('data-value');
             if (url) {
                 if (div.hasAttribute('dir')) {
-                    mode = '?dir';
+                    mode = '?tar';
                 } else {
                     mode = '?raw';
                 }
