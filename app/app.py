@@ -7,12 +7,12 @@ from init import *
 
 
 def add_page(option,dps,path,ACL,root):
-    if option=="add":
+    if "add" in option:
         validate_acl(path, ACL, True)
         return render_template("upload.html")
-    if option=="upfile": return upfile(dps,path,ACL,root)
-    if option=="updir":  return updir(dps,path,ACL,root)
-    if "mkdir": return mkdir(path,ACL,root)
+    if "upfile" in option: return upfile(dps,path,ACL,root)
+    if "updir"  in option: return updir(dps,path,ACL,root)
+    if "mkdir"  in option: return mkdir(path,ACL,root)
 
 
 @app.route('/<path:path>', methods=['GET','POST'])
@@ -30,7 +30,7 @@ def explorer(path):
         
         # Files management stuff for users
         return add_page(
-            option,dps,path,ACL,root
+            request.args,dps,path,ACL,root
         )
         if "delete" in request.args:
             return delfile(path,ACL,root)
@@ -99,7 +99,7 @@ def index():
 
         # Files management stuff for users
         return add_page(
-            option,dps,"",ACL,root
+            request.args,dps,"",ACL,root
         )
         # Check if static page is requested
         if "static" in request.args:
