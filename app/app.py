@@ -21,6 +21,7 @@ def explorer(path):
         
         # Files management stuff for users
         if "add" in request.args:
+            validate_acl(path, ACL, True)
             return render_template("upload.html")
 
         if "upfile" in request.args:
@@ -99,6 +100,7 @@ def index():
 
         # Files management stuff for users
         if "add" in request.args:
+            validate_acl("", ACL, True)
             return render_template("upload.html")
     
         if "upfile" in request.args:
