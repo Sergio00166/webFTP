@@ -59,8 +59,8 @@ def get_info(file_path):
         '-show_entries', 'stream=index:stream_tags=title:stream_tags=language',
         '-of', 'json', file_path
     ], stdout=PIPE,stderr=PIPE).stdout.decode() )
+    subtitles_list = []
 
-    subtitles_list =[]
     for p,stream in enumerate(
         ffprobe_output.get('streams',[])
     ):

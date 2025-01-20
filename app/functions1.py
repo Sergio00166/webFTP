@@ -24,6 +24,8 @@ textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
 is_binary = lambda path: bool(open(path, mode="rb").read(1024).translate(None, textchars))
 # Function to compress HTML output without modifying contents
 minify = lambda stream: (''.join(map(str.strip, x.split("\n"))) for x in stream)
+# Set error output file for server error logging
+error_file = sep.join([pypath[0],"extra","error.log"])
 
 
 def getclient(request):
@@ -87,9 +89,11 @@ def printerr(e):
         "[SERVER ERROR]\n"+
         f"   [line {e_line}] '{e_file}'\n"+
         f"   [{e_type}] {e_message}\n"+
-        "[END ERROR]"
+        "[END ERROR]\n"
     )
-    print(msg,file=stderr)
+    open(error_file,"a").write(msg)
+    print(msg,file=stderr,end="")
+
 
 def error(e, client):
     if isinstance(e, PermissionError):
