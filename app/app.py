@@ -6,6 +6,16 @@
 from init import *
 
 
+def add_page(opt,dps,path,ACL,root):
+    if "upfile" in opt: return upfile(dps,path,ACL,root)
+    if "updir"  in opt: return updir(dps,path,ACL,root)
+    if "mkdir"  in opt: return mkdir(path,ACL,root)
+    if "add"    in opt:
+        validate_acl(path, ACL, True)
+        return render_template("upload.html")
+    else: return None
+
+
 @app.route('/<path:path>', methods=['GET','POST'])
 # For showing a directory, launching the custom media players
 # or send in raw mode (or stream) files or send the dir as .tar
@@ -20,24 +30,11 @@ def explorer(path):
         if path.endswith("/"): path = path[:-1]
         
         # Files management stuff for users
-        if "add" in request.args:
-            validate_acl(path, ACL, True)
-            return render_template("upload.html")
+        chkn = add_page(request.args,dps,path,ACL,root)
+        if chkn is not None: return chkn
 
-        if "upfile" in request.args:
-            return upfile(dps,path,ACL,root)
-        
-        if "updir" in request.args:
-            return updir(dps,path,ACL,root)
-
-        if "mkdir" in request.args:
-            return mkdir(path,ACL,root)
-
-        if "delete" in request.args:
-            return delfile(path,ACL,root)
-
-        if "mvcp" in request.args:
-            return move_copy(path,ACL,root)
+        if "delete" in request.args: return delfile(path,ACL,root)
+        if "mvcp"   in request.args: return move_copy(path,ACL,root)
     
         # Check if we can access it
         validate_acl(path,ACL)
@@ -99,18 +96,8 @@ def index():
         if "login"  in request.args: return login(USERS)
 
         # Files management stuff for users
-        if "add" in request.args:
-            validate_acl("", ACL, True)
-            return render_template("upload.html")
-    
-        if "upfile" in request.args:
-            return upfile(dps,"",ACL,root)
-        
-        if "updir" in request.args:
-            return updir(dps,"",ACL,root)
-
-        if "mkdir" in request.args:
-            return mkdir("",ACL,root)
+        chkn = add_page(request.args,dps,"",ACL,root)
+        if chkn is not None: return chkn
 
         # Check if static page is requested
         if "static" in request.args:
