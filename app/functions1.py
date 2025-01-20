@@ -3,7 +3,7 @@
 from os.path import commonpath,join,isdir,relpath,abspath
 from os.path import getmtime,getsize,exists,normpath
 from flask import render_template,request,redirect
-from os import listdir,sep,scandir,access,R_OK
+from os import listdir,sep,scandir,access
 from urllib.parse import urlparse, urlunparse
 from datetime import datetime as dt
 from json import load as jsload
