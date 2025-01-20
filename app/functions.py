@@ -1,7 +1,7 @@
 #Code by Sergio00166
 
 from functions1 import *
-from os import R_OK,W_OK
+from os import R_OK
 
 
 def safe_path(path,root,igntf=False):
