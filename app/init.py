@@ -34,8 +34,9 @@ app,folder_size,root = init()
 app.secret_key = urandom(24).hex()
 
 # Configure SQLite for session storage
+db_path = path[0]+sep+"extra"+sep+"sessions.db"
 app.config['SESSION_TYPE'] = 'sqlalchemy'
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///sessions.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
