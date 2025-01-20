@@ -26,23 +26,21 @@ def check_ffmpeg_installed():
 
 def get_codec(source, index):
     # Gets the codec name from a file
-    cmd = [
+    return run([
         'ffprobe', '-v', 'quiet',
         '-select_streams', f's:{index}',
-        '-show_entries', 'stream=codec_name',
-        '-of', 'default=noprint_wrappers=1:nokey=1',
-        source
-    ]
-    return Popen(cmd, stdout=PIPE).communicate()[0].decode('UTF8').strip()
+        '-show_entries', 'stream=codec_name','-of',
+        'default=noprint_wrappers=1:nokey=1',source
+    ], stdout=PIPE,stderr=PIPE).stdout.decode().strip()
 
 
 def get_chapters(file_path):
     try:
-        result = run([
+        ffprobe_output = jsload( run([
             'ffprobe', '-v', 'quiet', '-print_format',
             'json', '-show_entries', 'chapters', file_path
-        ], stdout=PIPE, stderr=PIPE, text=True)
-        ffprobe_output = jsload(result.stdout)
+        ], stdout=PIPE,stderr=PIPE).stdout.decode() )
+
         filtered_chapters = [
             {
                 'title': chapter['tags'].get('title', 'Untitled'),
@@ -56,13 +54,16 @@ def get_chapters(file_path):
 
 def get_info(file_path):
     # This is to get all the subtitles name or language
-    result = run([
+    ffprobe_output = jsload( run([
         'ffprobe', '-v', 'quiet', '-select_streams', 's', 
         '-show_entries', 'stream=index:stream_tags=title:stream_tags=language',
         '-of', 'json', file_path
-    ], stdout=PIPE, stderr=PIPE, text=True) 
-    ffprobe_output,subtitles_list = jsload(result.stdout),[]
-    for p,stream in enumerate( ffprobe_output.get('streams',[]) ):
+    ], stdout=PIPE,stderr=PIPE).stdout.decode() )
+
+    subtitles_list =[]
+    for p,stream in enumerate(
+        ffprobe_output.get('streams',[])
+    ):
         tags = stream.get('tags', {})
         title = tags.get('title')
         lang = tags.get('language')
@@ -81,13 +82,11 @@ def get_track(file,index,info=False):
     # Fmmpeg to convert it directly
     if not codec in ["ssa", "ass"]: codec="webvtt"
     if not info:
-        cmd = [
+        out = run([
             'ffmpeg', '-i', file,
             '-map', f'0:s:{index}',
             '-f', codec, '-'
-        ]
-        proc = Popen(cmd, stdout=PIPE, stderr=PIPE)
-        out = proc.communicate()[0].decode("UTF-8")
+        ], stdout=PIPE,stderr=PIPE).stdout.decode()
     else: out = ""
     return codec, out
  
