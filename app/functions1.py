@@ -31,7 +31,7 @@ error_file = sep.join([pypath[0],"extra","error.log"])
 def getclient(request):
     ua = request.headers.get('User-Agent', '').lower()   
     ah = request.headers.get('Accept', '').lower()
-    json = any(x in ua for x in ["wget","curl","fetch"]) or 'application/json' in ah
+    json = any(x in ua for x in ["wget","curl","fetch","powershell"]) or 'application/json' in ah
     normal = ua.startswith("mozilla/5.0") and not any(x in ua for x in ["msie","trident"])
     return "normal" if normal else "json" if json else "legacy"
 
