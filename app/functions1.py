@@ -62,6 +62,9 @@ def validate_acl(path,ACL,write=False):
     path = normpath(path)
     # It need to be always UNIX sep
     path = path.replace(sep,"/")
+    if path.startswith("/"):
+        path = path[1:]
+
     while True:
         # Always start on /
         if not path.startswith("/"):

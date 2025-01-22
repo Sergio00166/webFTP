@@ -29,31 +29,35 @@ def check_rec_chg_parent(path, ACL, root, new_parent):
 
 
 def mkdir(path, ACL, root):
-    
-    if request.method != "POST":
-        return redirect_no_query()
-
+    # Check if user can access endpoint
     safe_path(path, root)
     validate_acl(path, ACL, True)
-    foldername = request.form.get("foldername", "").strip()
-    error = None
 
-    if not foldername:
-        error = "Folder name cannot be empty."
-    else:
-        full_path = safe_path(path+sep+foldername, root, True)
+    if request.method!="POST": return redirect_no_query()
+    foldername = request.form.get("foldername", "")
+
+    try:
+        if not foldername: raise NameError
+        path = path+sep+foldername.strip()
+        full_path = safe_path(path,root,True)
+        validate_acl(path, ACL, True)
         parent_dir = sep.join(full_path.split(sep)[:-1])
-        r_path = path+sep+foldername
 
-        if not exists(parent_dir):
-            error = "Parent dir does not exist."
-        elif exists(full_path):
-            error = "Dir already exists."
-        else:
-            try: validate_acl(r_path, ACL, True)
-            except PermissionError:
-                error = "You don't have permission to do that."
-            else: makedirs(full_path)
+        if not exists(parent_dir): raise FileNotFoundError
+        elif exists(full_path): raise SameFileError
+        else: makedirs(full_path)
+
+    except PermissionError:
+        error = "You don't have permission to do that."
+    except NameError:
+        error = "Folder name cannot be empty."
+    except FileNotFoundError:
+        error = "Parent directory does not exist."
+    except SameFileError:
+        error = "Directory already exists."
+    except Exception:
+        error = "Something went wrong"
+    else: error = None
 
     if not error: return redirect_no_query()
 
@@ -64,31 +68,36 @@ def mkdir(path, ACL, root):
 
 
 def handle_upload(dps, path, ACL, root, action, up_type):
-
-    if request.method != "POST":
-        redirect_no_query()
-
-    dps.set_params(dps, ACL, path, root)
+    # Check if user can access endpoint
     safe_path(path, root)
     validate_acl(path, ACL, True)
-    error = None
+    
+    if request.method!="POST": redirect_no_query()
+    # Set params for the file upload class
+    dps.set_params(dps, ACL, path, root)
 
-    try: request.form.get("filename")
+    try:
+        # Just call the werkzeug modified class to
+        # start parsing and writing them to disk.
+        # See override.py (CustomFormDataParser)
+        request.form.get("filename")
+
     except PermissionError:
         error = "You don't have permission to upload some files."
     except NameError:
         error = f"Please select {up_type} to upload."
     except SameFileError:
         error = "(Some) item(s) already exists."
-    except:
+    except Exception:
         error = "Something went wrong when uploading."
+    else: error = None
 
     if not error: return redirect_no_query()
     return render_template(
         "upload.html", error=error,
         action=action, filename=""
     )
-    
+
 
 def upfile(dps, path, ACL, root):
     return handle_upload(dps, path, ACL, root, "upFile", "file(s)")
@@ -103,7 +112,7 @@ def delfile(path, ACL, root):
         path = safe_path(path, root)
         
         if isdir(path):
-            check_recursive(path, ACL, root, True)
+            check_recursive(path,ACL,root,True)
             rmtree(path)
         else: remove(path)
 
@@ -111,12 +120,13 @@ def delfile(path, ACL, root):
         return "Permission denied", 403
     except FileNotFoundError:
         return "File not found", 404
-    except:
+    except Exception:
         return "Server Error", 500
     return "Successful", 200
 
 
 def move_copy(path, ACL, root):
+    # Check if user can access endpoint
     validate_acl(path, ACL)
 
     if request.method == "POST":
@@ -155,6 +165,6 @@ def mvcp_worker(ACL, path, destination, root, mv):
         return "Not found", 404
     except SameFileError:
         return "Already exists", 409
-    except:
+    except Exception:
         return "Server Error", 500
 
