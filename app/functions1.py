@@ -2,10 +2,10 @@
 
 from os.path import getmtime,getsize,exists,normpath,dirname
 from os.path import commonpath,join,isdir,relpath,abspath
-from flask import render_template,request,redirect
-from os import listdir,sep,scandir,access
 from urllib.parse import urlparse, urlunparse
+from os import listdir,sep,scandir,access
 from datetime import datetime as dt
+from flask import request,redirect
 from json import load as jsload
 from time import sleep as delay
 from sys import path as pypath
@@ -96,19 +96,6 @@ def printerr(e):
     )
     open(error_file,"a").write(msg)
     print(msg,file=stderr,end="")
-
-
-def error(e, client):
-    if isinstance(e, PermissionError):
-        if client == "json": return "[]", 403
-        return render_template('403.html'), 403
-    elif isinstance(e, FileNotFoundError):
-        if client == "json": return "[]", 404
-        return render_template('404.html'), 404
-    else:
-        printerr(e) # Log the error to cli
-        if client == "json": return "[]", 500
-        return render_template('500.html'), 500
 
 
 def redirect_no_query():

@@ -1,6 +1,6 @@
 # Code by Sergio00166
 
-from functions import update_rules,error,safe_path
+from functions import update_rules,safe_path
 from override import CustomFormDataParser
 from flask import redirect,request,Flask
 from send_file import send_file,send_dir

@@ -14,7 +14,9 @@ def add_page(opt,dps,path,ACL,root):
     if "upfile" in opt: return upfile(dps,path,ACL,root)
     if "updir"  in opt: return updir(dps,path,ACL,root)
     if "mkdir"  in opt: return mkdir(path,ACL,root)
-    if "add"    in opt: return render_template("upload.html")
+    if "add"    in opt:
+        validate_acl(path, ACL, True)
+        return render_template("upload.html")
 
 
 def serveFiles_page(path,ACL,root,client,folder_size):
@@ -91,4 +93,18 @@ def logout():
     try: session.pop("user")
     except: pass
     return redirect_no_query()
+
+
+
+def error(e, client):
+    if isinstance(e, PermissionError):
+        if client == "json": return "[]", 403
+        return render_template('403.html'), 403
+    elif isinstance(e, FileNotFoundError):
+        if client == "json": return "[]", 404
+        return render_template('404.html'), 404
+    else:
+        printerr(e) # Log the error to cli
+        if client == "json": return "[]", 500
+        return render_template('500.html'), 500
 
