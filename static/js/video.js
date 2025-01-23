@@ -1,7 +1,7 @@
 /* Code by Sergio00166 */
 
 let mouse_ctrl_delay = 1500;
-let doubleTouch_delay = 350;
+let doubleTouch_delay = 400;
 
 var video = document.querySelector("video");
 const volume = document.querySelector(".volume");
