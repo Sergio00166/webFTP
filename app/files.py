@@ -29,7 +29,7 @@ def check_rec_chg_parent(path, ACL, root, new_parent):
 
 
 def mkdir(path, ACL, root):
-
+    validate_acl(path, ACL, True)
     if request.method!="POST": return redirect_no_query()
     foldername = request.form.get("foldername", "")
 
@@ -65,7 +65,7 @@ def mkdir(path, ACL, root):
 
 
 def handle_upload(dps, path, ACL, root, action, up_type):
-    
+    validate_acl(path, ACL, True)
     if request.method!="POST": redirect_no_query()
     # Set params for the file upload class
     dps.set_params(dps, ACL, path, root)
@@ -104,7 +104,6 @@ def delfile(path, ACL, root):
     try:
         validate_acl(path, ACL, True)
         path = safe_path(path, root)
-        
         if isdir(path):
             check_recursive(path,ACL,root,True)
             rmtree(path)
