@@ -29,9 +29,6 @@ def check_rec_chg_parent(path, ACL, root, new_parent):
 
 
 def mkdir(path, ACL, root):
-    # Check if user can access endpoint
-    safe_path(path, root)
-    validate_acl(path, ACL, True)
 
     if request.method!="POST": return redirect_no_query()
     foldername = request.form.get("foldername", "")
@@ -68,9 +65,6 @@ def mkdir(path, ACL, root):
 
 
 def handle_upload(dps, path, ACL, root, action, up_type):
-    # Check if user can access endpoint
-    safe_path(path, root)
-    validate_acl(path, ACL, True)
     
     if request.method!="POST": redirect_no_query()
     # Set params for the file upload class
@@ -100,10 +94,10 @@ def handle_upload(dps, path, ACL, root, action, up_type):
 
 
 def upfile(dps, path, ACL, root):
-    return handle_upload(dps, path, ACL, root, "upFile", "file(s)")
+    return handle_upload(dps,path,ACL,root,"upFile","file(s)")
 
 def updir(dps, path, ACL, root):
-    return handle_upload(dps, path, ACL, root, "upDir", "dir")
+    return handle_upload(dps,path,ACL,root,"upDir","dir")
 
 
 def delfile(path, ACL, root):
@@ -126,8 +120,6 @@ def delfile(path, ACL, root):
 
 
 def move_copy(path, ACL, root):
-    # Check if user can access endpoint
-    validate_acl(path, ACL)
 
     if request.method == "POST":
         action = request.form.get("action")

@@ -10,10 +10,7 @@ def add_page(opt,dps,path,ACL,root):
     if "upfile" in opt: return upfile(dps,path,ACL,root)
     if "updir"  in opt: return updir(dps,path,ACL,root)
     if "mkdir"  in opt: return mkdir(path,ACL,root)
-    if "add"    in opt:
-        validate_acl(path, ACL, True)
-        return render_template("upload.html")
-    else: return None
+    if "add"    in opt: return render_template("upload.html")
 
 
 @app.route('/<path:path>', methods=['GET','POST'])
@@ -28,18 +25,23 @@ def explorer(path):
 
         # Paths must not end on slash
         if path.endswith("/"): path = path[:-1]
+        # Check if we can access it
+        r_path,path = path,safe_path(path,root)
+        validate_acl(r_path,ACL)
         
         # Files management stuff for users
-        chkn = add_page(request.args,dps,path,ACL,root)
-        if chkn is not None: return chkn
+        if set(request.args) & set(
+            ["add","upfile","updir","mkdir"]):
+            validate_acl(r_path, ACL, True)
+            return add_page(request.args,dps,r_path,ACL,root)
 
-        if "delete" in request.args: return delfile(path,ACL,root)
-        if "mvcp"   in request.args: return move_copy(path,ACL,root)
+        if "delete" in request.args:
+            validate_acl(r_path, ACL, True)
+            return delfile(r_path,ACL,root)
+
+        if "mvcp" in request.args:
+            return move_copy(r_path,ACL,root)
     
-        # Check if we can access it
-        validate_acl(path,ACL)
-        path = safe_path(path,root)
-
         # Get the file type of the file
         file_type = get_file_type(path)
     
@@ -96,8 +98,10 @@ def index():
         if "login"  in request.args: return login(USERS)
 
         # Files management stuff for users
-        chkn = add_page(request.args,dps,"",ACL,root)
-        if chkn is not None: return chkn
+        if set(request.args) & set(
+            ["add","upfile","updir","mkdir"]):
+            validate_acl("", ACL, True)
+            return add_page(request.args,dps,"",ACL,root)
 
         # Check if static page is requested
         if "static" in request.args:

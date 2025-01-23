@@ -1,7 +1,7 @@
 #Code by Sergio00166
 
+from os.path import getmtime,getsize,exists,normpath,dirname
 from os.path import commonpath,join,isdir,relpath,abspath
-from os.path import getmtime,getsize,exists,normpath
 from flask import render_template,request,redirect
 from os import listdir,sep,scandir,access
 from urllib.parse import urlparse, urlunparse
@@ -56,19 +56,17 @@ def update_rules(USERS,ACL):
         except: pass
         delay(1)
 
+
 def validate_acl(path,ACL,write=False):
+
     askd_perm = 2 if write else 1
     user = session.get("user","DEFAULT")
-    path = normpath(path)
-    # It need to be always UNIX sep
-    path = path.replace(sep,"/")
-    if path.startswith("/"):
-        path = path[1:]
+
+    path = normpath(path) # Sane .. & .
+    if path.startswith("//"):    path = path[2:]
+    if not path.startswith("/"): path = "/"+path
 
     while True:
-        # Always start on /
-        if not path.startswith("/"):
-            path = "/"+path
         # Check if there is a rule for it
         if path in ACL and user in ACL[path]:
             perm = ACL[path][user]
@@ -76,9 +74,11 @@ def validate_acl(path,ACL,write=False):
             if perm>=askd_perm: return
         # Check if on top and break loop
         if path=="/": break
-        # Go to parent directory
-        path = "/".join(path.split("/")[:-1])
+        # Goto parent directory
+        path = dirname(path)
+
     raise PermissionError
+
 
 
 def printerr(e):  
