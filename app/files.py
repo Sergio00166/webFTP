@@ -101,20 +101,12 @@ def updir(dps, path, ACL, root):
 
 
 def delfile(path, ACL, root):
-    try:
-        validate_acl(path, ACL, True)
-        path = safe_path(path, root)
-        if isdir(path):
-            check_recursive(path,ACL,root,True)
-            rmtree(path)
-        else: remove(path)
-
-    except PermissionError:
-        return "Permission denied", 403
-    except FileNotFoundError:
-        return "File not found", 404
-    except Exception:
-        return "Server Error", 500
+    validate_acl(path, ACL, True)
+    path = safe_path(path, root)
+    if isdir(path):
+        check_recursive(path,ACL,root,True)
+        rmtree(path)
+    else: remove(path)
     return "Successful", 200
 
 
