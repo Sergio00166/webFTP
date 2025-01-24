@@ -29,8 +29,10 @@ def check_rec_chg_parent(path, ACL, root, new_parent):
 
 
 def mkdir(path, ACL, root):
+    if request.method!="POST":
+        return redirect_no_query()
+
     validate_acl(path, ACL, True)
-    if request.method!="POST": return redirect_no_query()
     foldername = request.form.get("foldername", "")
 
     try:
@@ -64,9 +66,11 @@ def mkdir(path, ACL, root):
     )
 
 
-def handle_upload(dps, path, ACL, root, action, up_type):
+def handle_upload(dps,path,ACL,root,action,up_type):
+    if request.method!="POST":
+        return redirect_no_query()
+
     validate_acl(path, ACL, True)
-    if request.method!="POST": redirect_no_query()
     # Set params for the file upload class
     dps.set_params(dps, ACL, path, root)
 
@@ -111,17 +115,17 @@ def delfile(path, ACL, root):
 
 
 def move_copy(path, ACL, root):
+    if request.method!="POST":
+        return redirect_no_query()
 
-    if request.method == "POST":
-        action = request.form.get("action")
-        if action in ["move", "copy"]:
-            destination = request.form.get("destination", "").strip()
-            if not destination:
-                return "Not found", 404
-            return mvcp_worker(ACL,path,destination,root,action=="move")
-        return "Method not valid", 400
+    action = request.form.get("action")
+    if action in ["move", "copy"]:
+        destination = request.form.get("destination", "").strip()
+        if not destination:
+            return "Not found", 404
+        return mvcp_worker(ACL,path,destination,root,action=="move")
+    return "Method not valid", 400
 
-    return redirect_no_query()
 
 
 def mvcp_worker(ACL, path, destination, root, mv):
