@@ -57,8 +57,9 @@ def update_rules(USERS,ACL):
         delay(1)
 
 
+# Checks if the given path has permissions
+# in the ACL file (uses inheritance)
 def validate_acl(path,ACL,write=False):
-
     askd_perm = 2 if write else 1
     user = session.get("user","DEFAULT")
 
