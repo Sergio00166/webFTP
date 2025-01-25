@@ -14,7 +14,7 @@ from pathlib import Path
 from sys import stderr
 
 
-is_subdirectory = lambda parent, child: commonpath([parent]) == commonpath([parent, child])
+is_subdirectory = lambda parent, child: commonpath([parent, child])==parent
 # Load database of file type and extensions
 file_types = jsload(open(sep.join([pypath[0],"extra","files.json"])))
 # Convert it to a lookup table to get file type as O(1)
