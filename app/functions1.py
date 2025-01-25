@@ -90,11 +90,14 @@ def printerr(e):
     e_file = tb.tb_frame.f_code.co_filename
     e_line = tb.tb_lineno
     e_message = str(e)
+    time_str = dt.now().strftime("%Y-%m-%d %H:%M:%S")
     msg = (
-        "[SERVER ERROR]\n"+
-        f"   [line {e_line}] '{e_file}'\n"+
-        f"   [{e_type}] {e_message}\n"+
-        "[END ERROR]\n"
+        "[ERROR]\n"+
+        f"   [Time] {time_str} \n"
+        f"   [File] '{e_file}':{e_line}\n"+
+        f"   [Type] {e_type}\n"+
+        f"   [eMsg] {e_message}\n"+
+        "[END]\n"
     )
     open(error_file,"a").write(msg)
     print(msg,file=stderr,end="")
