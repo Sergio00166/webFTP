@@ -20,8 +20,7 @@ def init():
     # Get all the args from the Enviorment
     root = getenv('FOLDER',None)
     if root is None: exit(1)
-    if root.endswith("/") or root.endswith(chr(92)):
-        root = root[:-1] # Remove last /
+    root = abspath(root)
     folder_size = getenv('SHOWSIZE',"FALSE")
     folder_size = folder_size.upper()=="TRUE"
     # Create the main app flask

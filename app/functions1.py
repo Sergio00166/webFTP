@@ -62,8 +62,9 @@ def update_rules(USERS,ACL):
 def validate_acl(path,ACL,write=False):
     askd_perm = 2 if write else 1
     user = session.get("user","DEFAULT")
-
-    path = normpath(path) # Sane .. & .
+    path = normpath(path)
+    path = path.replace(sep,"/")
+    
     if path.startswith("//"):    path = path[2:]
     if not path.startswith("/"): path = "/"+path
 
