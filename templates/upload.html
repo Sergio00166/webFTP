@@ -14,12 +14,12 @@
       <div class="hero-body">
         <div class="container has-text-centered">
           <div class="column is-4 is-offset-4"> 
-		      {% if error %} <h1 class="title has-text-danger">{{ error }}</h1> {% endif %} <div class="box">
+              {% if error %} <h1 class="title has-text-danger">{{ error }}</h1> {% endif %} <div class="box">
 
-			  <div id="loader"  style="display: none;">
-			       <img src="{{ url_for('index', static='svg/load.gif') }}">
-				   <p>Uploading. Please wait...</p>
-			  </div>
+              <div id="loader"  style="display: none;">
+                   <img src="{{ url_for('index', static='svg/load.gif') }}">
+                   <p>Uploading. Please wait...</p>
+              </div>
 
               <div class="field">
                 <div class="control" id="selector">
