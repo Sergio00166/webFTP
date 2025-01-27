@@ -9,7 +9,7 @@ def explorer(path):
     try:
         # User login/logout stuff
         if "logout" in request.args: return logout()
-        if "login" in request.args:  return login(USERS)
+        if "login"  in request.args:  return login(USERS)
 
         # Paths must not end on slash
         if path.endswith("/"): path = path[:-1]

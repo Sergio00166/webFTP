@@ -235,10 +235,12 @@ function sendRequest(formData, path, currentUrlPath) {
             msg = 'That file/folder does not exist';
         } else if (xhr.status === 500) {
             msg = 'Something went wrong on the server.';
-        } else if (xhr.status === 400) {
-            msg = 'Method not valid';
         } else if (xhr.status === 409) {
             msg = 'It already exists';
+        } else if (xhr.status === 507) {
+            msg = 'Not enough free space'
+        } else {
+            msg = 'Something went wrong';
         }
         alert(msg);
         return false;

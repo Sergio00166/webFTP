@@ -56,7 +56,7 @@ def mkdir(path, ACL, root):
         error = "Directory already exists."
     except OSError as e:
         if e.errno == 28:
-            error = "Not enough storage"
+            error =   "Not enough storage"
         else: error = "Something went wrong"
     except Exception:
         error = "Something went wrong"
@@ -92,7 +92,7 @@ def handle_upload(dps,path,ACL,root,action,up_type):
         error = "(Some) item(s) already exists."
     except OSError as e:
         if e.errno == 28:
-            error = "Not enough storage"
+            error =   "Not enough storage"
         else: error = "Something went wrong"
     except Exception:
         error = "Something went wrong when uploading."
@@ -121,13 +121,10 @@ def delfile(path, ACL, root):
             rmtree(path)
         else: remove(path)
  
-        return "Succesful", 200
-    except FileNotFoundError:
-        return "Not Found", 404
-    except PermissionError:
-        return "Forbidden", 403
-    except Exception:
-        return "Server Error", 500
+    except FileNotFoundError: return "Not Found",    404
+    except PermissionError:   return "Forbidden",    403
+    except Exception:         return "Server Error", 500
+    else:                     return "Successful",   200
 
 
 def move_copy(path, ACL, root):
@@ -137,10 +134,9 @@ def move_copy(path, ACL, root):
     action = request.form.get("action")
     if action in ["move", "copy"]:
         destination = request.form.get("destination", "").strip()
-        if not destination:
-            return "Not Found", 404
+        if not destination: return "Bad Request", 400
         return mvcp_worker(ACL,path,destination,root,action=="move")
-    return "Method Not Allowed", 400
+    return "Method Not Allowed", 405
 
 
 
@@ -161,17 +157,12 @@ def mvcp_worker(ACL, path, destination, root, mv):
             copytree(path, destination+sep+basename(path))
         else: copy(path, destination)
 
-        return "Successful", 200
-    except PermissionError:
-        return "Permission denied", 403
-    except FileNotFoundError:
-        return "Not found", 404
-    except SameFileError:
-        return "Already exists", 409
+    except PermissionError:   return "Forbidden",          403
+    except FileNotFoundError: return "Not found",          404
+    except SameFileError:     return "Conflict",           409
     except OSError as e:
-        if e.errno == 28:
-            return "Insufficient Storage", 507
-        else: return "Server Error", 500
-    except Exception:
-        return "Server Error", 500
+        if e.errno == 28:     return "Not enough Storage", 507
+        else:                 return "Server Error",       500
+    except Exception:         return "Server Error",       500
+    else:                     return "Successful",         200
 
