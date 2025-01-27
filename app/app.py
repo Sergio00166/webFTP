@@ -3,7 +3,7 @@
 from init import *
 
 
-@app.route('/<path:path>', methods=['GET','POST','DELETE'])
+@app.route('/<path:path>', methods=['GET','POST','DELETE','MKCOL'])
 def explorer(path):
     client = getclient(request)
     try:
@@ -17,9 +17,12 @@ def explorer(path):
         # File management stuff for users
         if request.method.lower() == "delete":
             return delfile(path,ACL,root)
+
+        if request.method.lower() == "mkcol":
+            return mkdir(path,ACL,root)
     
         if set(request.args) & set(
-            ["add","upfile","updir","mkdir"]):
+            ["add","upfile","updir"]):
             return add_page(request.args,dps,path,ACL,root)
 
         if "mvcp" in request.args:
@@ -32,7 +35,7 @@ def explorer(path):
 
 
 
-@app.route('/', methods=['GET','POST'])
+@app.route('/', methods=['GET','POST','DELETE','MKCOL'])
 def index():
     client = getclient(request)
     try:
@@ -41,8 +44,14 @@ def index():
         if "login"  in request.args: return login(USERS)
 
         # Files management stuff for users
+        if request.method.lower() == "delete":
+            return "Forbidden", 403
+
+        if request.method.lower() == "mkcol":
+            return "Conflict",  409
+
         if set(request.args) & set(
-            ["add","upfile","updir","mkdir"]):
+            ["add","upfile","updir"]):
             return add_page(request.args,dps,"",ACL,root)
 
         # Check if static page is requested

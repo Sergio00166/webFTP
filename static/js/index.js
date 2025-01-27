@@ -228,7 +228,6 @@ function sendRequest(formData, path, currentUrlPath) {
     xhr.open("POST", path+"/?mvcp", false);
     xhr.send(formData);
     if (xhr.status !== 200) {
-        let errorMessage;
         if (xhr.status === 403) {
             msg = 'You dont have permission to do that';
         } else if (xhr.status === 404) {
@@ -325,4 +324,3 @@ function createOptionDialog() {
         }
     }
 }
-

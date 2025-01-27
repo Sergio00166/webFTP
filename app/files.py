@@ -1,4 +1,4 @@
-#Code by Sergio00166
+ #Code by Sergio00166
 
 from functions import validate_acl, safe_path, redirect_no_query
 from shutil import rmtree, move, copy, copytree, SameFileError
@@ -27,47 +27,11 @@ def check_rec_chg_parent(path, ACL, root, new_parent):
             item_path = "/".join(path_parts)
             validate_acl(item_path, ACL, True)
 
+def upfile(dps, path, ACL, root):
+    return handle_upload(dps,path,ACL,root,"upFile","file(s)")
 
-def mkdir(path, ACL, root):
-    if request.method!="POST":
-        return redirect_no_query()
-
-    validate_acl(path, ACL, True)
-    foldername = request.form.get("foldername", "")
-
-    try:
-        if not foldername: raise NameError
-        path = path+sep+foldername.strip()
-        full_path = safe_path(path,root,True)
-        validate_acl(path, ACL, True)
-        parent_dir = sep.join(full_path.split(sep)[:-1])
-
-        if not exists(parent_dir): raise FileNotFoundError
-        elif exists(full_path):    raise FileExistsError
-        else: makedirs(full_path)
-
-    except PermissionError:
-        error = "You don't have permission to do that."
-    except NameError:
-        error = "Folder name cannot be empty."
-    except FileNotFoundError:
-        error = "Parent directory does not exist."
-    except FileExistsError:
-        error = "Directory already exists."
-    except OSError as e:
-        if e.errno == 28:
-            error =   "Not enough storage"
-        else: error = "Something went wrong"
-    except Exception:
-        error = "Something went wrong"
-    else: error = None
-
-    if not error: return redirect_no_query()
-
-    return render_template(
-        "upload.html", error=error,
-        action="mkdir", filename=foldername
-    )
+def updir(dps, path, ACL, root):
+    return handle_upload(dps,path,ACL,root,"upDir","dir")
 
 
 def handle_upload(dps,path,ACL,root,action,up_type):
@@ -105,11 +69,37 @@ def handle_upload(dps,path,ACL,root,action,up_type):
     )
 
 
-def upfile(dps, path, ACL, root):
-    return handle_upload(dps,path,ACL,root,"upFile","file(s)")
+def move_copy(path, ACL, root):
+    if request.method!="POST":
+        return redirect_no_query()
 
-def updir(dps, path, ACL, root):
-    return handle_upload(dps,path,ACL,root,"upDir","dir")
+    action = request.form.get("action")
+    if action in ["move", "copy"]:
+        destination = request.form.get("destination", "").strip()
+        if not destination: return "Bad Request", 400
+        return mvcp_worker(ACL,path,destination,root,action=="move")
+    return "Method Not Allowed", 405
+
+
+def mkdir(path, ACL, root):
+    try:
+        validate_acl(path, ACL, True)
+        full_path = safe_path(path,root,True)
+        validate_acl(path, ACL, True)
+        parent_dir = sep.join(full_path.split(sep)[:-1])
+
+        if not exists(parent_dir): raise FileNotFoundError
+        elif   exists(full_path):  raise FileExistsError
+        else: makedirs(full_path)
+
+    except PermissionError:   return "Forbidden",          403
+    except FileNotFoundError: return "Not Found",          404
+    except FileExistsError:   return "Conflict",           409
+    except OSError as e:
+        if e.errno == 28:     return "Not enough Storage", 507
+        else:                 return "Server Error",       500
+    except Exception:         return "Server Error",       500
+    else:                     return "Successful",         200
 
 
 def delfile(path, ACL, root):
@@ -125,19 +115,6 @@ def delfile(path, ACL, root):
     except PermissionError:   return "Forbidden",    403
     except Exception:         return "Server Error", 500
     else:                     return "Successful",   200
-
-
-def move_copy(path, ACL, root):
-    if request.method!="POST":
-        return redirect_no_query()
-
-    action = request.form.get("action")
-    if action in ["move", "copy"]:
-        destination = request.form.get("destination", "").strip()
-        if not destination: return "Bad Request", 400
-        return mvcp_worker(ACL,path,destination,root,action=="move")
-    return "Method Not Allowed", 405
-
 
 
 def mvcp_worker(ACL, path, destination, root, mv):
