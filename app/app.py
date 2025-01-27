@@ -3,7 +3,7 @@
 from init import *
 
 
-@app.route('/<path:path>', methods=['GET','POST'])
+@app.route('/<path:path>', methods=['GET','POST','DELETE'])
 def explorer(path):
     client = getclient(request)
     try:
@@ -14,17 +14,18 @@ def explorer(path):
         # Paths must not end on slash
         if path.endswith("/"): path = path[:-1]
         
-        # Files management stuff for users
+        # File management stuff for users
+        if request.method.lower() == "delete":
+            return delfile(path,ACL,root)
+    
         if set(request.args) & set(
             ["add","upfile","updir","mkdir"]):
             return add_page(request.args,dps,path,ACL,root)
 
-        if "delete" in request.args:
-            return delfile(path,ACL,root)
-
         if "mvcp" in request.args:
             return move_copy(path,ACL,root)
-    
+
+        # Send/stream files or directory listing
         return serveFiles_page(path,ACL,root,client,folder_size)
   
     except Exception as e: return error(e,client)

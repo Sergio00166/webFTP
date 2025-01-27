@@ -108,7 +108,9 @@ async function executeDeletes() {
                 const div = selectedElements[id];
                 const url = div.getAttribute('data-value');
                 if (url) {
-                    const response = await fetch(url+"?delete");
+                    const response = await fetch(
+                        url, {method: 'DELETE'}
+                    );
                     if (response.status === 403) {
                         msg = 'You dont have permission to do that';
                     } else if (response.status === 404) {

@@ -43,7 +43,7 @@ def mkdir(path, ACL, root):
         parent_dir = sep.join(full_path.split(sep)[:-1])
 
         if not exists(parent_dir): raise FileNotFoundError
-        elif exists(full_path): raise SameFileError
+        elif exists(full_path):    raise FileExistsError
         else: makedirs(full_path)
 
     except PermissionError:
@@ -52,8 +52,12 @@ def mkdir(path, ACL, root):
         error = "Folder name cannot be empty."
     except FileNotFoundError:
         error = "Parent directory does not exist."
-    except SameFileError:
+    except FileExistsError:
         error = "Directory already exists."
+    except OSError as e:
+        if e.errno == 28:
+            error = "Not enough storage"
+        else: error = "Something went wrong"
     except Exception:
         error = "Something went wrong"
     else: error = None
@@ -84,8 +88,12 @@ def handle_upload(dps,path,ACL,root,action,up_type):
         error = "You don't have permission to upload some files."
     except NameError:
         error = f"Please select {up_type} to upload."
-    except SameFileError:
+    except FileExistsError:
         error = "(Some) item(s) already exists."
+    except OSError as e:
+        if e.errno == 28:
+            error = "Not enough storage"
+        else: error = "Something went wrong"
     except Exception:
         error = "Something went wrong when uploading."
     else: error = None
@@ -105,13 +113,21 @@ def updir(dps, path, ACL, root):
 
 
 def delfile(path, ACL, root):
-    validate_acl(path, ACL, True)
-    path = safe_path(path, root)
-    if isdir(path):
-        check_recursive(path,ACL,root,True)
-        rmtree(path)
-    else: remove(path)
-    return "Successful", 200
+    try:
+        validate_acl(path, ACL, True)
+        path = safe_path(path, root)
+        if isdir(path):
+            check_recursive(path,ACL,root,True)
+            rmtree(path)
+        else: remove(path)
+ 
+        return "Succesful", 200
+    except FileNotFoundError:
+        return "Not Found", 404
+    except PermissionError:
+        return "Forbidden", 403
+    except Exception:
+        return "Server Error", 500
 
 
 def move_copy(path, ACL, root):
@@ -122,9 +138,9 @@ def move_copy(path, ACL, root):
     if action in ["move", "copy"]:
         destination = request.form.get("destination", "").strip()
         if not destination:
-            return "Not found", 404
+            return "Not Found", 404
         return mvcp_worker(ACL,path,destination,root,action=="move")
-    return "Method not valid", 400
+    return "Method Not Allowed", 400
 
 
 
@@ -152,6 +168,10 @@ def mvcp_worker(ACL, path, destination, root, mv):
         return "Not found", 404
     except SameFileError:
         return "Already exists", 409
+    except OSError as e:
+        if e.errno == 28:
+            return "Insufficient Storage", 507
+        else: return "Server Error", 500
     except Exception:
         return "Server Error", 500
 
