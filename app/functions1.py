@@ -7,7 +7,6 @@ from os import listdir,sep,scandir,access
 from datetime import datetime as dt
 from flask import request,redirect
 from json import load as jsload
-from time import sleep as delay
 from sys import path as pypath
 from flask import session
 from pathlib import Path
@@ -36,25 +35,13 @@ def getclient(request):
     return "normal" if normal else "json" if json else "legacy"
 
 
-def update_rules(USERS,ACL):
+def load_userACL(USERS,ACL):
     path = sep.join([pypath[0],"extra",""])
-    users_db = path+"users.json"
-    acl_db = path+"acl.json"
-    old_mtimes = (0,0)
-    while True:
-        delay(1)
-        try:
-            mtimes = (
-                getmtime(users_db),
-                getmtime(acl_db)
-            )
-            if mtimes > old_mtimes:
-                tmp = jsload(open(users_db))
-                USERS.clear(); USERS.update(tmp)
-                tmp = jsload(open(acl_db))
-                ACL.clear(); ACL.update(tmp)
-            old_mtimes = mtimes
-        except: pass
+    try:
+        USERS.clear();  ACL.clear()
+        USERS.update(jsload(open(path+"users.json")))
+        ACL.update(jsload(open(path+"acl.json")))
+    except: exit(1)
 
 
 # Checks if the given path has permissions

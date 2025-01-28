@@ -1,13 +1,12 @@
 # Code by Sergio00166
 
-from functions import update_rules,safe_path
+from functions import load_userACL,safe_path
 from override import CustomFormDataParser
 from flask import redirect,request,Flask
 from send_file import send_file,send_dir
 from flask_sqlalchemy import SQLAlchemy
 from os import sep,getenv,urandom
 from secrets import token_hex
-from threading import Thread
 from os.path import abspath
 from actions import *
 from sys import path
@@ -56,5 +55,4 @@ dps = app.request_class.form_data_parser_class
 # Define basic stuff
 sroot = app.static_folder
 USERS,ACL = {},{}
-thr = Thread(target=update_rules, args=(USERS,ACL,))
-thr.daemon = True;  thr.start()
+load_userACL()
