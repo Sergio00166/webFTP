@@ -55,4 +55,4 @@ dps = app.request_class.form_data_parser_class
 # Define basic stuff
 sroot = app.static_folder
 USERS,ACL = {},{}
-load_userACL()
+load_userACL(USERS,ACL)
