@@ -42,6 +42,7 @@ def update_rules(USERS,ACL):
     acl_db = path+"acl.json"
     old_mtimes = (0,0)
     while True:
+        delay(1)
         try:
             mtimes = (
                 getmtime(users_db),
@@ -54,7 +55,6 @@ def update_rules(USERS,ACL):
                 ACL.clear(); ACL.update(tmp)
             old_mtimes = mtimes
         except: pass
-        delay(1)
 
 
 # Checks if the given path has permissions
