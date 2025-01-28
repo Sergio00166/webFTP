@@ -1,6 +1,6 @@
 #Code by Sergio00166
 
-from files import upfile,updir,mkdir,delfile,move_copy
+from files import upfile,updir,mkdir,delfile,move,copy
 from flask import redirect,request,render_template
 from actions1 import audio,directory,video
 from send_file import send_file,send_dir
