@@ -26,7 +26,11 @@ def init():
     app = Flask(__name__,static_folder=sroot,template_folder=templates)
     return app,folder_size,root
 
+
+# Init main application
 app,folder_size,root = init()
+sroot = app.static_folder
+
 # Change this to an static value for multi-worker scenarios
 app.secret_key = urandom(24).hex()
 
@@ -52,7 +56,9 @@ CustomFormDataParser
 # Get current parser object
 dps = app.request_class.form_data_parser_class
 
-# Define basic stuff
-sroot = app.static_folder
+# Load and define the USER/ACL database
 USERS,ACL = {},{}
-load_userACL(USERS,ACL)
+try: load_userACL(USERS,ACL)
+except Exception as e:
+    printerr(e); exit(1)
+

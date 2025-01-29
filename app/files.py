@@ -90,7 +90,7 @@ def mkdir(path, ACL, root):
 
         if not exists(parent_dir): raise FileNotFoundError
         elif   exists(full_path):  raise FileExistsError
-        else: makedirs(full_path)
+        else:  makedirs(full_path)
 
     except PermissionError:   return "Forbidden",          403
     except FileNotFoundError: return "Not Found",          404
@@ -132,7 +132,7 @@ def mvcp_worker(ACL, path, destination, root, mv):
         if mv: sh_move(path, destination)
         elif isdir(path):
             copytree(path, destination+sep+basename(path))
-        else: sh_copy(path, destination)
+        else: sh_copy(path,destination)
 
     except PermissionError:   return "Forbidden",          403
     except FileNotFoundError: return "Not found",          404
