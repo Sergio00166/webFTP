@@ -81,18 +81,18 @@ def get_folder_content(folder_path, root, folder_size, ACL):
             item_path = join(folder_path, item)
             item_full_path = relpath(item_path,start=root).replace(sep,"/")
             validate_acl(item_full_path,ACL)
-            description = get_file_type(item_path)
-            if description == "directory" and folder_size:
+            filetype = get_file_type(item_path)
+            if filetype == "directory" and folder_size:
                 size = get_directory_size(item_path)
-            elif description != "directory":
+            elif filetype != "directory":
                 size = getsize(item_path)
             else: size = 0
             try: mtime = getmtime(item_path)
             except: mtime = None
-            if description == "directory": item_path += "/"
+            if filetype == "directory": item_path += "/"
             content.append({
                 'name': item, 'path': item_full_path,
-                'description': description,
+                'type': filetype,
                 "size": size, "mtime": mtime
             })
         except: pass
@@ -172,13 +172,16 @@ def validate_acl(path,ACL,write=False):
     raise PermissionError
 
 
-def printerr(e):  
+def printerr(e,override_msg=None):  
     tb = e.__traceback__
     while tb.tb_next: tb = tb.tb_next
     e_type = type(e).__name__
     e_file = tb.tb_frame.f_code.co_filename
     e_line = tb.tb_lineno
-    e_message = str(e)
+
+    if override_msg: e_message = override_msg
+    else: e_message = e_message = str(e)
+    
     if e_message.startswith("["):
         idx = e_message.find("] ")
         errno = e_message[:idx+1]

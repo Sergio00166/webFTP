@@ -57,12 +57,9 @@ def serveFiles_page(path,ACL,root,client,folder_size):
         if not request.path.endswith('/') and client!="json":
             return redirect(request.path+'/')
         
-        proto = request.headers.get('X-Forwarded-Proto', request.scheme)
-        hostname = proto+"://"+request.host+"/"
         sort = request.args["sort"] if "sort" in request.args else ""
-        
         if "tar" in request.args: return send_dir(path,root,ACL)
-        return directory(path,root,folder_size,sort,client,hostname,ACL)
+        return directory(path,root,folder_size,sort,client,ACL)
 
 
 def serveRoot_page(ACL,root,client,folder_size):
@@ -190,4 +187,5 @@ def directory(path,root,folder_size,sort,client,hostname,ACL):
         html = stream_template(file,folder_content=folder_content,folder_path=folder_path,\
                                parent_directory=parent_directory,is_root=is_root,sort=sort)
         return minify(html) # reduce size
-    else: return [{**item, "path": hostname+encurl(item["path"])} for item in folder_content]
+    else: return [{**item, "path": "/"+encurl(item["path"])} for item in folder_content]
+

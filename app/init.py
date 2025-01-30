@@ -60,5 +60,6 @@ dps = app.request_class.form_data_parser_class
 USERS,ACL = {},{}
 try: load_userACL(USERS,ACL)
 except Exception as e:
-    printerr(e); exit(1)
+    printerr(e,"Cannot open the USER/ACL database files")
+    exit(1) # Dont countinue if error
 
