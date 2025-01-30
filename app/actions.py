@@ -28,27 +28,27 @@ def serveFiles_page(path,ACL,root,client,folder_size):
 
     # Check if the path is not a dir
     if not file_type=="directory":
-        
+
         if request.path.endswith('/') and client!="json":
             return redirect(request.path[:-1])
-    
+
         # If the text is plain text send it as plain text
         if file_type in ["text","source"]:
             return send_file(path,mimetype='text/plain')
-    
+
         # If it have the raw arg or is requested
         # from a cli browser return the file
         elif "raw" in request.args or client!="normal":
             return send_file(path)
-    
+
         # Custom player for each multimedia format
         elif file_type=="video":
             info = (request.method.lower()=="head")
             subs = request.args["subs"] if "subs" in request.args else ""
             return video(path,root,subs,file_type,info,ACL)
-        
+
         elif file_type=="audio": return audio(path,root,file_type,ACL)
-        
+
         # Else send it and let flask autodetect the mime
         else: return send_file(path)
 
@@ -56,20 +56,17 @@ def serveFiles_page(path,ACL,root,client,folder_size):
     else:
         if not request.path.endswith('/') and client!="json":
             return redirect(request.path+'/')
-        
+
         sort = request.args["sort"] if "sort" in request.args else ""
         if "tar" in request.args: return send_dir(path,root,ACL)
         return directory(path,root,folder_size,sort,client,ACL)
 
 
 def serveRoot_page(ACL,root,client,folder_size):
-    proto = request.headers.get('X-Forwarded-Proto',request.scheme)
-    hostname = proto+"://"+request.host+"/"
     path = safe_path("/",root) # Check if we can access it
     sort = request.args["sort"] if "sort" in request.args else ""
-
     if "tar" in request.args: return send_dir(path,root,ACL,"index")
-    return directory(path,root,folder_size,sort,client,hostname,ACL)
+    return directory(path,root,folder_size,sort,client,ACL)
 
 
 def login(USERS):
@@ -113,7 +110,7 @@ def get_filepage_data(file_path,root,filetype,ACL,random=False,fixrng=False):
     # Get all folder contents
     out = get_folder_content(folder,root,False,ACL)
     # Get all folder contents that has the same filetype
-    lst = [x["path"] for x in out if x["description"]==filetype]
+    lst = [x["path"] for x in out if x["type"]==filetype]
     # Get next one
     try: nxt = lst[lst.index(path)+1]
     except: nxt = "" if fixrng else lst[0]
@@ -175,7 +172,7 @@ def audio(path,root,file_type,ACL):
     return render_template('audio.html',path=path,name=name,prev=prev,nxt=nxt,rnd=rnd)
 
 
-def directory(path,root,folder_size,sort,client,hostname,ACL):
+def directory(path,root,folder_size,sort,client,ACL):
     # Get the sort value if it is on the list else set default value
     sort = sort if sort in ["np","nd","sp","sd","dp","dd"] else "np"
     # Get all the data from that directry and its contents
@@ -188,4 +185,3 @@ def directory(path,root,folder_size,sort,client,hostname,ACL):
                                parent_directory=parent_directory,is_root=is_root,sort=sort)
         return minify(html) # reduce size
     else: return [{**item, "path": "/"+encurl(item["path"])} for item in folder_content]
-
