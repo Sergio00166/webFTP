@@ -117,55 +117,55 @@ window.addEventListener('fullscreenchange', scaleVideo);
 
 
 /* Inicialitate everything */
-async function init() {
-    if (subs_legacy != null) {
-        if (subs_legacy == "true") {
-            subs_legacy = true;
-            settingsBtn.classList.add('lmbsl');
-        } else { subs_legacy = false; }
-    } else { subs_legacy = false; }
 
-    for (var i = 0; i < subtitleSelect.options.length; i++) {
-        if (subtitleSelect.options[i].text === text) {
-            subtitleId = i;  break;
+if (subs_legacy != null) {
+    if (subs_legacy == "true") {
+        subs_legacy = true;
+        settingsBtn.classList.add('lmbsl');
+    } else { subs_legacy = false; }
+} else { subs_legacy = false; }
+
+for (var i = 0; i < subtitleSelect.options.length; i++) {
+    if (subtitleSelect.options[i].text === text) {
+        subtitleId = i;  break;
+    }
+}
+subtitleSelect.selectedIndex = subtitleId;
+subtitleId = subtitleId - 1;
+changeSubs(subtitleId);
+
+if (saved_speed != null) {
+    video.playbackRate = parseFloat(saved_speed);
+    for (let i = 0; i < speedSelect.options.length; i++) {
+        if (speedSelect.options[i].value === saved_speed) {
+            speedSelect.selectedIndex = i;  break;
         }
     }
-    subtitleSelect.selectedIndex = subtitleId;
-    subtitleId = subtitleId - 1;
-    changeSubs(subtitleId);
+} else { speedSelect.selectedIndex = 3; }
 
-    if (saved_speed != null) {
-        video.playbackRate = parseFloat(saved_speed);
-        for (let i = 0; i < speedSelect.options.length; i++) {
-            if (speedSelect.options[i].value === saved_speed) {
-                speedSelect.selectedIndex = i;  break;
-            }
-        }
-    } else { speedSelect.selectedIndex = 3; }
+if (currentMode != null) {
+    currentMode = parseInt(currentMode);
+    mode.innerHTML = ["1", "»", "&orarr;"][currentMode] || "1";
+} else { currentMode = 0; }
 
-    if (currentMode != null) {
-        currentMode = parseInt(currentMode);
-        mode.innerHTML = ["1", "»", "&orarr;"][currentMode] || "1";
-    } else { currentMode = 0; }
+if (volumeVal === null) { volumeVal = 1; }
+video.volume = parseFloat(volumeVal);
+currentVol.style.width = volumeVal*100+"%";
 
-    if (volumeVal === null) { volumeVal = 1; }
-    video.volume = parseFloat(volumeVal);
-    currentVol.style.width = volumeVal*100+"%";
-
-    // Cast value
-    if (muted != null) {
-        if (muted == "true") {
-            muted = true;
-            video.volume = 0;
-        } else { muted = false; }
+// Cast value
+if (muted != null) {
+    if (muted == "true") {
+        muted = true;
+        video.volume = 0;
     } else { muted = false; }
+} else { muted = false; }
 
-    handleVideoIcon();
-    video.play().catch( (e)=>{} );
-    if (video.paused) { pause(); }
-    setVideoTime();
-    fix_aspect_ratio();
-}; init();
+handleVideoIcon();
+video.play().catch( (e)=>{} );
+if (video.paused) { pause(); }
+setVideoTime();
+fix_aspect_ratio();
+
 
 
 /* Rest of the functions */
