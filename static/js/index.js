@@ -201,7 +201,7 @@ function renameFiles() {
             var dest = prompt('New Name for '+name);
             if (dest === null) { break; }
             dest = item.substring(0, item.lastIndexOf("/"))+"/"+dest;
-			const success  = sendRequest(item, dest, "MOVE");
+            const success  = sendRequest(item, dest, "MOVE");
             if (!success) break;
         }
         clearAllMvCp();
@@ -212,7 +212,7 @@ function renameFiles() {
 function sendRequest(path, destination, method) {
     const xhr = new XMLHttpRequest();
     xhr.open(method, path, false);
-	destination = decodeURIComponent(destination);
+    destination = decodeURIComponent(destination);
     xhr.setRequestHeader("Destination", destination);
     xhr.send();
 
