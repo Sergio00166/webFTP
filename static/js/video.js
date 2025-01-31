@@ -41,7 +41,6 @@ const prevLink = document.getElementById("prev");
 const nextLink = document.getElementById("next");
 const canvas = document.querySelector("canvas");
 const touchBox = document.getElementById("touch-box");
-const savedSubName = localStorage.getItem("videoSubs");
 
 var video = document.querySelector("video");
 var videoContainer = document.querySelector(".video-container");
@@ -126,7 +125,8 @@ window.addEventListener('fullscreenchange', scaleVideo);
     } else { subs_legacy = false; }
 
     for (var i = 0; i < subtitleSelect.options.length; i++) {
-        if (subtitleSelect.options[i].text === savedSubName) {
+        if (subtitleSelect.options[i].text ===
+        localStorage.getItem("videoSubs")) {
             subtitleId = i;  break;
         }
     }
